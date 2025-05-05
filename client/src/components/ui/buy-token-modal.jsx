@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Dialog } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -54,14 +54,14 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
     onOpenChange(false);
   };
 
+  // Only render the modal content if it's open
+  if (!open) return null;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <DialogOverlay className="fixed inset-0 z-40 bg-neutral-400 opacity-75" />
+      <DialogContent className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div className="absolute inset-0 bg-neutral-400 opacity-75"></div>
-          </div>
-          
           <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
           
           <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
@@ -160,7 +160,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
             </div>
           </div>
         </div>
-      </div>
+      </DialogContent>
     </Dialog>
   );
 };
