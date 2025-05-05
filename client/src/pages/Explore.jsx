@@ -10,8 +10,8 @@ const Explore = () => {
   const [assetDetailModal, setAssetDetailModal] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [filters, setFilters] = useState({
-    type: '',
-    location: '',
+    type: 'all_types',
+    location: 'all_locations',
     sortBy: 'newest'
   });
 
@@ -30,8 +30,8 @@ const Explore = () => {
 
   // Filter and sort assets
   const filteredAssets = assets.filter(asset => {
-    if (filters.type && asset.type !== filters.type) return false;
-    if (filters.location && asset.location !== filters.location) return false;
+    if (filters.type && filters.type !== 'all_types' && asset.type !== filters.type) return false;
+    if (filters.location && filters.location !== 'all_locations' && asset.location !== filters.location) return false;
     return true;
   });
 
@@ -66,7 +66,7 @@ const Explore = () => {
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all_types">All Types</SelectItem>
                 {assetTypes.map((type) => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
@@ -80,7 +80,7 @@ const Explore = () => {
                 <SelectValue placeholder="All Locations" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all_locations">All Locations</SelectItem>
                 {locations.map((location) => (
                   <SelectItem key={location} value={location}>{location}</SelectItem>
                 ))}
@@ -169,7 +169,7 @@ const Explore = () => {
           <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Assets Found</h3>
           <p className="text-neutral-300 mb-6">Try adjusting your filters to find more assets.</p>
           <Button 
-            onClick={() => setFilters({ type: '', location: '', sortBy: 'newest' })}
+            onClick={() => setFilters({ type: 'all_types', location: 'all_locations', sortBy: 'newest' })}
             variant="outline"
             className="bg-white border-neutral-200 text-neutral-400 hover:bg-neutral-50"
           >

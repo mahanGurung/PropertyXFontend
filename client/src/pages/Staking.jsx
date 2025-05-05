@@ -165,7 +165,7 @@ const Staking = () => {
                         <SelectValue placeholder="Select Token" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="">Select Token</SelectItem>
+                        <SelectItem value="select_token">Select Token</SelectItem>
                         {assets.map((asset) => (
                           <SelectItem key={asset.id} value={asset.symbol}>{asset.symbol}-APT</SelectItem>
                         ))}
@@ -269,7 +269,7 @@ const Staking = () => {
                     alert('Please connect your wallet first');
                     return;
                   }
-                  if (!selectedApt) {
+                  if (!selectedApt || selectedApt === 'select_token') {
                     alert('Please select an APT token');
                     return;
                   }
