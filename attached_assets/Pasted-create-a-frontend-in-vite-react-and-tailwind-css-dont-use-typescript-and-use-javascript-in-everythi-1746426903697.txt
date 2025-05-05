@@ -1,0 +1,16 @@
+create a frontend in vite react and tailwind css. dont use typescript and use javascript in everything. dont provide me backend or any other just provide frontend ui code. there should be header and footer. 
+
+in the header- logo , home, explore, tokenize,staking profile and connect wallet option should be there
+
+in the home. i want the details of the project and how project will benefit information. also in the home i want buy token option which will open a card where user can buy pxt token. 
+
+in the stake: there should be option to stake pxt and apt token . min thereshold to unstake must me 3 month and so on, like 6 month 9 month or year, 
+
+in the explore: people who tokenize asset in our platform should be visisble and when users click on view detail then all the details related to asset should be shown and users can buy those apt token related to that particular asset and ownership also .
+
+in the tokenize: people who want to tokenize the asset can come here and provide name, symbol, valuation of asset and other necessary things to tokenize and get apt tokens and pxfo of thast asset.
+in the profile: if the user or owner gain any profit from their owned token get details from there, another thing is govenrance where users who have ownership can vote and writew proposal, if any user or owner have asset token then the details of that topken also should be visible in the probile section with their all details.
+
+and i will provide you the whitepaper their one thing is wrong, pxt stake can earn you ownership thats not true. only the apt token of the specific token can earn you ownership of that specific asset. i will provide you the content of tmy whitepaper on this project, see that and make sure to provide only the frontend, dont provide me databae code or backend code because the backend is smartcontract so i will link the address and function of the smart contract later in the frontend code. only provide me the interface what website looks like in javascript language. dont include typescript anywhere.
+
+in the connect wallet make sure the stacks blockchain wallet connects and address and disconenct option shows.
