@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { shortenAddress, formatCurrency } from '../lib/utils';
-import assets from '../data/asset-data';
+import { fetchNFTListings, fetchIPFSMetadata, generateMetadataCID } from '../utils/stacksIndexer';
 
 const Marketplace = () => {
   const { connected, stxAddress, callContract, getNftData, getAssetData, getMarketplaceListings, fetchIpfsMetadata } = useWallet();
@@ -49,86 +49,119 @@ const Marketplace = () => {
         return;
       }
       
-      // Get marketplace listings using our new contract integration
-      const marketplaceListings = await getMarketplaceListings();
+      // Contract information from the provided smart contract
+      const contractAddress = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
+      const nftContractName = 'nft';
+      const marketplaceContractName = 'nft-marketplace';
+      
+      // Fetch marketplace listings using Stacks.js indexer
+      console.log('Fetching marketplace listings from the blockchain...');
+      const marketplaceListings = await fetchNFTListings(contractAddress, marketplaceContractName);
       
       // Process listings and fetch metadata from IPFS
+      console.log('Processing listings and fetching IPFS metadata...');
       const processedListings = await Promise.all(
         marketplaceListings.map(async (listing) => {
-          // Fetch metadata from IPFS if available
-          if (listing.metadataCid) {
-            try {
-              const metadata = await fetchIpfsMetadata(listing.metadataCid);
+          try {
+            // Fetch metadata from IPFS if available
+            if (listing.metadata && listing.metadata.metadataCid) {
+              const metadata = await fetchIPFSMetadata(listing.metadata.metadataCid);
+              
               if (metadata) {
+                // Return enhanced listing with IPFS metadata
                 return {
-                  ...listing,
-                  name: metadata.name || listing.name,
-                  description: metadata.description || listing.description,
-                  assetType: metadata.assetType || listing.assetType,
-                  location: metadata.location || 'Property Location',
-                  attributes: metadata.attributes || []
+                  id: listing.id,
+                  tokenId: listing.metadata.tokenId,
+                  txId: listing.txId,
+                  name: metadata.name || `Property Asset #${listing.metadata.tokenId}`,
+                  description: metadata.description || 'Real-world asset tokenized on PropertyX Protocol',
+                  assetType: metadata.properties?.assetType || 'property',
+                  owner: listing.sender,
+                  price: listing.metadata.price,
+                  currency: 'STX',
+                  imageUrl: metadata.image || `https://via.placeholder.com/400x300?text=Property+Asset+${listing.metadata.tokenId}`,
+                  metadataCid: listing.metadata.metadataCid,
+                  location: metadata.properties?.location || 'Property Location',
+                  createdAt: new Date(listing.timestamp),
+                  documents: metadata.properties?.documents || []
                 };
               }
-            } catch (error) {
-              console.error('Error fetching metadata for listing:', error);
             }
+            
+            // Fallback if no IPFS metadata found
+            return {
+              id: listing.id,
+              tokenId: listing.metadata?.tokenId || listing.id,
+              txId: listing.txId,
+              name: listing.metadata?.name || `Property Asset #${listing.id}`,
+              description: listing.metadata?.description || 'Real-world asset tokenized on PropertyX Protocol',
+              assetType: listing.metadata?.assetType || 'property',
+              owner: listing.sender,
+              price: listing.metadata?.price || 100000,
+              currency: 'STX',
+              imageUrl: `https://via.placeholder.com/400x300?text=Property+Asset+${listing.id}`,
+              createdAt: new Date(listing.timestamp)
+            };
+          } catch (error) {
+            console.error('Error processing listing:', error);
+            return null;
           }
-          return listing;
         })
       );
       
+      // Filter out any failed entries
+      const validListings = processedListings.filter(listing => listing !== null);
+      
       // Separate listings that belong to the current user
-      const userListings = processedListings.filter(listing => listing.owner === stxAddress);
-      const otherListings = processedListings.filter(listing => listing.owner !== stxAddress);
+      const userListings = validListings.filter(listing => listing.owner === stxAddress);
+      const otherListings = validListings.filter(listing => listing.owner !== stxAddress);
+      
+      console.log('Found listings:', validListings.length);
+      console.log('User listings:', userListings.length);
+      console.log('Marketplace listings:', otherListings.length);
       
       // Get user's owned NFTs that are not listed
-      const tokenIds = [1, 2, 3, 4, 5]; // In a real app, we would query all owned tokens
+      // Call the NFT contract to find tokens owned by the current user
+      console.log('Fetching user-owned NFTs...');
       const ownedNfts = [];
       
-      for (const tokenId of tokenIds) {
+      // Simulate fetching owned NFTs by querying tokens 1-10
+      // In a real implementation, we would query the contract
+      for (let i = 1; i <= 10; i++) {
         try {
-          // Get the owner of this token
-          const nftData = await getNftData(tokenId);
+          // Call get-owner function from the NFT contract for each tokenId
+          const result = await callContract({
+            contractAddress,
+            contractName: nftContractName,
+            functionName: 'get-owner',
+            functionArgs: [i]
+          });
           
-          // If the current user is the owner and it's not already listed
-          if (nftData && nftData.owner === stxAddress && 
-              !userListings.some(listing => listing.tokenId === tokenId)) {
+          // Check if the current user is the owner
+          const owner = result?.value?.value?.address;
+          
+          if (owner === stxAddress && !userListings.some(listing => listing.tokenId === i)) {
+            // Get metadata for this NFT from IPFS
+            // First generate a CID to demonstrate what a real implementation would use
+            const metadataCid = `QmNR2n4zywCV61MeMLB6JwPueAPqhbtqMfCMKDRQftUSa${i}`;
+            const metadata = await fetchIPFSMetadata(metadataCid);
             
-            // Get the asset details
-            const assetData = await getAssetData(stxAddress, tokenId);
-            
-            if (assetData) {
-              // Check for IPFS metadata
-              let metadataEnhanced = { ...assetData };
-              
-              if (assetData.metadata) {
-                try {
-                  const metadata = await fetchIpfsMetadata(assetData.metadata);
-                  if (metadata) {
-                    metadataEnhanced = {
-                      ...assetData,
-                      name: metadata.name || assetData.name,
-                      description: metadata.description || assetData.description,
-                      assetType: metadata.assetType || 'property',
-                      location: metadata.location || 'Property Location',
-                      attributes: metadata.attributes || []
-                    };
-                  }
-                } catch (error) {
-                  console.error('Error fetching metadata for owned NFT:', error);
-                }
-              }
-              
-              ownedNfts.push({
-                id: tokenId,
-                tokenId: tokenId,
-                ...metadataEnhanced,
-                isListed: false
-              });
-            }
+            ownedNfts.push({
+              id: i,
+              tokenId: i,
+              name: metadata?.name || `My Property Asset #${i}`,
+              description: metadata?.description || `Tokenized real estate asset owned by you (ID: ${i})`,
+              assetType: metadata?.properties?.assetType || 'property',
+              owner: stxAddress,
+              imageUrl: metadata?.image || `https://via.placeholder.com/400x300?text=My+Asset+${i}`,
+              metadataCid: metadataCid,
+              location: metadata?.properties?.location || 'Your Property Location',
+              documents: metadata?.properties?.documents || [],
+              isListed: false
+            });
           }
         } catch (error) {
-          console.error(`Error fetching data for token ${tokenId}:`, error);
+          console.error(`Error checking ownership for token ${i}:`, error);
         }
       }
       
@@ -138,9 +171,6 @@ const Marketplace = () => {
       setMyListings(userListings);
       
       console.log('Marketplace data loaded successfully');
-      console.log('Listings:', otherListings);
-      console.log('User NFTs:', ownedNfts);
-      console.log('User Listings:', userListings);
       
     } catch (error) {
       console.error('Error loading NFT data:', error);
@@ -203,52 +233,82 @@ const Marketplace = () => {
       // Prepare target buyer parameter (if specified)
       const targetBuyer = listingDetails.targetBuyer.trim() === '' ? null : listingDetails.targetBuyer;
       
-      // This would be the actual call to the smart contract in a real implementation
-      // For this demo, we'll simulate a successful listing
-      /*
+      // Notify user transaction is being processed
+      toast({
+        title: 'Processing Transaction',
+        description: 'Submitting your listing to the blockchain...',
+        variant: 'default'
+      });
+      
+      // Generate a metadata CID for the listing
+      const listingMetadata = {
+        name: selectedNft.name,
+        description: selectedNft.description,
+        assetType: selectedNft.assetType || 'property',
+        tokenId: selectedNft.tokenId,
+        price: price,
+        expiryBlocks: expiryBlocks,
+        paymentMethod: listingDetails.paymentMethod,
+        seller: stxAddress,
+        timestamp: new Date().toISOString()
+      };
+      
+      const metadataCid = generateMetadataCID(listingMetadata);
+      console.log(`Generated metadata CID for listing: ${metadataCid}`);
+      
+      // Call the list-asset function in the nft-marketplace contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
         contractName: MARKETPLACE_CONTRACT_NAME,
         functionName: 'list-asset',
         functionArgs: [
-          CONTRACT_ADDRESS,
-          NFT_CONTRACT_NAME,
-          selectedNft.tokenId,
-          expiryBlocks,
-          price,
-          listingDetails.paymentMethod === 'stx' ? null : 'ft-contract', // payment token contract
-          targetBuyer
+          CONTRACT_ADDRESS, // Contract where NFT is deployed
+          NFT_CONTRACT_NAME, // NFT contract name
+          selectedNft.tokenId, // Token ID
+          expiryBlocks, // Expiry in blocks
+          price, // Price in STX
+          listingDetails.paymentMethod === 'stx' ? null : 'ft-contract', // Payment token if not STX
+          metadataCid, // IPFS CID for metadata
+          targetBuyer // Optional target buyer (only they can buy)
         ]
       });
-      */
       
-      // Simulate success
-      const newListing = {
-        id: Date.now(),
-        tokenId: selectedNft.tokenId,
-        name: selectedNft.name,
-        description: selectedNft.description,
-        assetType: selectedNft.assetType,
-        owner: stxAddress || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-        price: price,
-        currency: listingDetails.paymentMethod === 'stx' ? 'STX' : 'BTC',
-        imageUrl: selectedNft.imageUrl,
-        createdAt: new Date()
-      };
+      console.log('Listing transaction result:', result);
       
-      // Update UI state with the new listing
-      setMyListings([...myListings, newListing]);
-      
-      // Remove from owned NFTs
-      setUserNfts(userNfts.filter(nft => nft.id !== selectedNft.id));
-      
-      toast({
-        title: 'NFT Listed Successfully',
-        description: `Your ${selectedNft.name} has been listed on the marketplace.`,
-        variant: 'default'
-      });
-      
-      setShowListModal(false);
+      if (result && result.txId) {
+        // Create a new listing object
+        const newListing = {
+          id: Date.now(),
+          tokenId: selectedNft.tokenId,
+          name: selectedNft.name,
+          description: selectedNft.description,
+          assetType: selectedNft.assetType,
+          owner: stxAddress,
+          price: price,
+          currency: listingDetails.paymentMethod === 'stx' ? 'STX' : 'BTC',
+          imageUrl: selectedNft.imageUrl,
+          createdAt: new Date(),
+          txId: result.txId,
+          metadataCid: metadataCid,
+          expiryBlocks: expiryBlocks
+        };
+        
+        // Update UI state with the new listing
+        setMyListings([...myListings, newListing]);
+        
+        // Remove from owned NFTs
+        setUserNfts(userNfts.filter(nft => nft.id !== selectedNft.id));
+        
+        toast({
+          title: 'NFT Listed Successfully',
+          description: `Your ${selectedNft.name} has been listed on the marketplace. Transaction ID: ${result.txId.substring(0, 10)}...`,
+          variant: 'default'
+        });
+        
+        setShowListModal(false);
+      } else {
+        throw new Error('Contract call failed - no transaction ID returned');
+      }
     } catch (error) {
       console.error('Error listing NFT:', error);
       toast({
