@@ -302,8 +302,14 @@ const Marketplace = () => {
     try {
       setIsLoading(true);
       
-      // This would be the actual call to the smart contract in a real implementation
-      /*
+      // Notify the user that we're processing the transaction
+      toast({
+        title: 'Processing Transaction',
+        description: 'Sending purchase request to the blockchain...',
+        variant: 'default'
+      });
+      
+      // Make the actual call to the smart contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
         contractName: MARKETPLACE_CONTRACT_NAME,
@@ -315,16 +321,18 @@ const Marketplace = () => {
           listing.currency !== 'STX' ? 'ft-contract' : null // payment token contract if not STX
         ]
       });
-      */
       
-      // Simulate successful purchase
+      // Show transaction details
+      console.log('Purchase transaction result:', result);
+      
+      // The NFT is now owned by the user
       const purchasedNft = {
         id: listing.id,
         tokenId: listing.tokenId,
         name: listing.name,
         description: listing.description,
         assetType: listing.assetType,
-        owner: stxAddress || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
+        owner: stxAddress,
         imageUrl: listing.imageUrl,
         isListed: false
       };
@@ -335,7 +343,7 @@ const Marketplace = () => {
       
       toast({
         title: 'Purchase Successful',
-        description: `You have successfully purchased ${listing.name}.`,
+        description: `You have successfully purchased ${listing.name}. Transaction ID: ${result.txId.substring(0, 10)}...`,
         variant: 'default'
       });
     } catch (error) {
