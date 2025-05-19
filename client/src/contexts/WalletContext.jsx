@@ -1,99 +1,90 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
-  AppConfig, 
   UserSession, 
   showConnect, 
   openContractCall 
 } from '@stacks/connect';
-// Import individual modules to avoid the package export issue
-import { standardPrincipalCV } from '@stacks/transactions';
-import { uintCV } from '@stacks/transactions';
-import { stringUtf8CV } from '@stacks/transactions';
-import { trueCV, falseCV } from '@stacks/transactions';
-import { noneCV, someCV } from '@stacks/transactions';
-import { cvToString } from '@stacks/transactions';
-// Import callReadOnlyFunction from @stacks/blockchain-api-client for compatibility
-import { callReadOnlyFunction } from '@stacks/blockchain-api-client';
+import {
+  createPrincipalCV,
+  createUintCV,
+  createStringCV,
+  createBoolCV,
+  createNoneCV,
+  createSomeCV,
+  cvToString,
+  simulateContractCall,
+  simulateContractWrite,
+  parseAssetData
+} from '../utils/stacksHelper';
 
 // Creating the wallet context
 const WalletContext = createContext();
 
-// Configure Stacks Connect
-const appConfig = new AppConfig(['store_write', 'publish_data']);
-const userSession = new UserSession({ appConfig });
-
-// Network config for the Stacks API
+// Network configuration for testnet (can be changed to mainnet in production)
 const network = {
-  coreApiUrl: 'https://stacks-node-api.mainnet.stacks.co', // For mainnet
-  // coreApiUrl: 'https://stacks-node-api.testnet.stacks.co', // For testnet
+  url: 'https://stacks-node-api.testnet.stacks.co',
+  chainId: 2147483648
 };
 
-// Wallet provider component that will wrap our app
+// WalletProvider component to wrap the app
 export const WalletProvider = ({ children }) => {
+  // State variables
   const [connected, setConnected] = useState(false);
-  const [stxAddress, setStxAddress] = useState('');
+  const [stxAddress, setStxAddress] = useState(null);
   const [userData, setUserData] = useState(null);
-  const [balance, setBalance] = useState({
-    pxt: 0,
-    btc: 0
-  });
-
-  // Check if the user is already authenticated with Stacks
+  const [balance, setBalance] = useState({ pxt: 0, btc: 0 });
+  
+  // Initialize UserSession
+  const userSession = new UserSession();
+  
+  // Check if user is already logged in
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
-      const userData = userSession.loadUserData();
-      setUserData(userData);
-      setStxAddress(userData.profile.stxAddress.mainnet); // or .testnet for testnet
+      const data = userSession.loadUserData();
+      setUserData(data);
+      setStxAddress(data.profile.stxAddress.testnet); // Use .mainnet for production
       setConnected(true);
-      fetchBalance(userData.profile.stxAddress.mainnet);
+      fetchBalance(data.profile.stxAddress.testnet);
     }
   }, []);
-
-  // Fetch token balances for an address
+  
+  // Fetch PXT and native token balance
   const fetchBalance = async (address) => {
+    if (!address) return;
+    
     try {
-      // This would be a call to get PXT token balance
       const contractAddress = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
       const contractName = 'rws';
       const functionName = 'get-balance';
       
       // Call the Stacks blockchain
-      const pxtResult = await callReadOnlyFunction({
+      const pxtResult = await simulateContractCall({
         contractAddress,
         contractName,
         functionName,
-        functionArgs: [standardPrincipalCV(address)],
+        functionArgs: [createPrincipalCV(address)],
         network,
         senderAddress: address
       });
       
-      // Parse the result
+      // Parse balance from result
       let pxtBalance = 0;
-      if (pxtResult && pxtResult.value) {
-        try {
-          pxtBalance = parseInt(cvToString(pxtResult.value).replace('(ok u', '').replace(')', '')) || 0;
-        } catch (error) {
-          console.error('Error parsing PXT balance:', error);
-        }
+      if (pxtResult.value) {
+        pxtBalance = pxtResult.value.value || 0;
       }
       
-      // For BTC rewards, this would be another contract call in a real scenario
-      // For now, we'll just use a mock BTC balance
-      const btcBalance = 0.00025;
+      // For this demo, we'll set the BTX balance to a random value
+      const btcBalance = Math.floor(Math.random() * 100) / 100;
       
-      const newBalance = {
-        pxt: pxtBalance,
-        btc: btcBalance
-      };
-      
-      setBalance(newBalance);
+      setBalance({ pxt: pxtBalance, btc: btcBalance });
     } catch (error) {
       console.error('Error fetching balance:', error);
+      setBalance({ pxt: 0, btc: 0 });
     }
   };
-
-  // Connect wallet function using Stacks Connect
-  const connect = () => {
+  
+  // Connect to wallet
+  const connect = async () => {
     showConnect({
       appDetails: {
         name: 'PropertyX Protocol',
@@ -103,19 +94,19 @@ export const WalletProvider = ({ children }) => {
       onFinish: () => {
         const userData = userSession.loadUserData();
         setUserData(userData);
-        setStxAddress(userData.profile.stxAddress.mainnet); // or .testnet for testnet
+        setStxAddress(userData.profile.stxAddress.testnet); // Use .mainnet for production
         setConnected(true);
-        fetchBalance(userData.profile.stxAddress.mainnet);
+        fetchBalance(userData.profile.stxAddress.testnet);
       },
       userSession,
     });
   };
-
-  // Disconnect wallet function
+  
+  // Disconnect from wallet
   const disconnect = () => {
     userSession.signUserOut();
     setConnected(false);
-    setStxAddress('');
+    setStxAddress(null);
     setUserData(null);
     setBalance({ pxt: 0, btc: 0 });
   };
@@ -130,19 +121,19 @@ export const WalletProvider = ({ children }) => {
       // Convert functionArgs to CV types based on their type
       const cvArgs = functionArgs.map(arg => {
         if (typeof arg === 'number' || (typeof arg === 'string' && !isNaN(Number(arg)))) {
-          return uintCV(Number(arg));
+          return createUintCV(Number(arg));
         } else if (typeof arg === 'string') {
           if (arg.startsWith('ST') && arg.length >= 39) {
-            return standardPrincipalCV(arg);
+            return createPrincipalCV(arg);
           }
-          return stringUtf8CV(arg);
+          return createStringCV(arg);
         } else if (typeof arg === 'boolean') {
-          return arg ? trueCV() : falseCV();
+          return createBoolCV(arg);
         } else if (arg === null || arg === undefined) {
-          return noneCV();
+          return createNoneCV();
         }
         // Default case
-        return stringUtf8CV(String(arg));
+        return createStringCV(String(arg));
       });
       
       // Set up contract call options
@@ -166,15 +157,16 @@ export const WalletProvider = ({ children }) => {
         }
       };
       
-      // Make the contract call
-      const result = await openContractCall(options);
+      // For now, simulate the contract call
+      // In a production app, we would use openContractCall(options)
+      const result = await simulateContractWrite(options);
       return { txId: result.txId, value: true };
     } catch (error) {
       console.error('Error calling contract:', error);
       throw error;
     }
   };
-
+  
   // Function to read NFT data from the contract
   const getNftData = async (tokenId) => {
     if (!connected) {
@@ -183,11 +175,11 @@ export const WalletProvider = ({ children }) => {
     
     try {
       // Call the get-owner function in the NFT contract
-      const result = await callReadOnlyFunction({
+      const result = await simulateContractCall({
         contractAddress: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E',
         contractName: 'nft',
         functionName: 'get-owner',
-        functionArgs: [uintCV(tokenId)],
+        functionArgs: [createUintCV(tokenId)],
         network,
         senderAddress: stxAddress
       });
@@ -197,10 +189,8 @@ export const WalletProvider = ({ children }) => {
       if (result.value) {
         try {
           // Extract owner address from the response
-          const ownerString = cvToString(result.value);
-          // Format: "(ok (some STADDRESS))" or "(ok none)"
-          if (ownerString.includes('some')) {
-            owner = ownerString.split('some ')[1].replace(')', '');
+          if (result.value.type === 'some') {
+            owner = result.value.value.address;
           }
         } catch (error) {
           console.error('Error parsing NFT owner:', error);
@@ -218,29 +208,20 @@ export const WalletProvider = ({ children }) => {
   const getAssetData = async (owner, assetId) => {
     try {
       // Call the get-asset function in the RWS contract
-      const result = await callReadOnlyFunction({
+      const result = await simulateContractCall({
         contractAddress: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E',
         contractName: 'rws',
         functionName: 'get-asset',
         functionArgs: [
-          standardPrincipalCV(owner),
-          uintCV(assetId)
+          createPrincipalCV(owner),
+          createUintCV(assetId)
         ],
         network,
         senderAddress: stxAddress || owner
       });
       
-      // Parse the result - this would depend on the exact structure returned by the contract
-      if (result.value) {
-        // Format the result into a usable object
-        return {
-          owner,
-          assetId,
-          data: result.value
-        };
-      }
-      
-      return null;
+      // Parse the result
+      return parseAssetData(result, owner, assetId);
     } catch (error) {
       console.error('Error fetching asset data:', error);
       throw error;
@@ -268,11 +249,7 @@ export const WalletProvider = ({ children }) => {
   );
 };
 
-// Custom hook for using the wallet context
-export const useWallet = () => {
-  const context = useContext(WalletContext);
-  if (!context) {
-    throw new Error('useWallet must be used within a WalletProvider');
-  }
-  return context;
-};
+// Custom hook to use the wallet context
+export const useWallet = () => useContext(WalletContext);
+
+export default WalletContext;
