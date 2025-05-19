@@ -4,8 +4,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { tokenizationSteps } from '../data/tokenomics-data';
+import { useWallet } from '../contexts/WalletContext';
+import { useToast } from '@/hooks/use-toast';
 
 const Tokenize = () => {
+  const { connected, stxAddress, callContract } = useWallet();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     assetType: '',
@@ -13,6 +18,9 @@ const Tokenize = () => {
     assetSymbol: '',
     location: '',
     description: '',
+    assetValue: '',
+    assetId: '',
+    ipfsData: '',
     images: []
   });
 
@@ -26,6 +34,99 @@ const Tokenize = () => {
 
   const prevStep = () => {
     setCurrentStep(currentStep - 1);
+  };
+  
+  const generateIpfsHash = () => {
+    // In a real implementation, you would upload data to IPFS
+    // For now, we'll create a simulated hash based on the form data
+    const dataString = JSON.stringify({
+      assetType: formData.assetType,
+      assetName: formData.assetName,
+      location: formData.location,
+      description: formData.description,
+      timestamp: Date.now()
+    });
+    
+    // Simple hash function for demo purposes
+    const hash = Array.from(dataString)
+      .reduce((hash, char) => (((hash << 5) - hash) + char.charCodeAt(0)) | 0, 0)
+      .toString(16)
+      .replace('-', '');
+      
+    return `ipfs://Qm${hash.padStart(44, 'a')}`;
+  };
+  
+  const submitTokenization = async () => {
+    if (!connected) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to submit your asset for tokenization.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Generate a numeric asset ID from the symbol (for demo purposes)
+      const assetIdValue = parseInt(Date.now().toString().slice(-8));
+      
+      // Generate IPFS data hash
+      const ipfsDataValue = generateIpfsHash();
+      
+      // Asset value converted to microstacks (assuming input is in STX)
+      const assetAmount = Math.floor(parseFloat(formData.assetValue || 0) * 1000000);
+      
+      // Prepare contract function parameters
+      const functionArgs = [
+        assetIdValue, // assetId as uint
+        formData.assetName, // name as string
+        assetAmount, // amount as uint
+        ipfsDataValue // ipfsData as string
+      ];
+      
+      // Call the add-for-tokenization function
+      const result = await callContract({
+        contractAddress: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E',
+        contractName: 'rws',
+        functionName: 'add-for-tokenization',
+        functionArgs: functionArgs
+      });
+      
+      if (result && result.value) {
+        toast({
+          title: "Tokenization Submitted",
+          description: "Your asset has been submitted for tokenization and awaits community approval.",
+          variant: "default"
+        });
+        
+        // Update form data with the generated values (for display purposes)
+        setFormData(prev => ({
+          ...prev,
+          assetId: assetIdValue.toString(),
+          ipfsData: ipfsDataValue
+        }));
+        
+        // Reset the form and go back to step 1
+        setTimeout(() => {
+          setCurrentStep(1);
+          // Optionally reset the form
+          // setFormData({...});
+        }, 3000);
+      } else {
+        throw new Error("Contract call failed");
+      }
+    } catch (error) {
+      console.error("Error submitting tokenization:", error);
+      toast({
+        title: "Submission Failed",
+        description: error.message || "There was an error submitting your asset for tokenization.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -360,9 +461,11 @@ const Tokenize = () => {
               ) : (
                 <Button
                   type="button"
+                  onClick={submitTokenization}
+                  disabled={isSubmitting}
                   className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition ml-auto"
                 >
-                  Submit Application
+                  {isSubmitting ? "Submitting..." : "Submit Application"}
                 </Button>
               )}
             </div>

@@ -1,12 +1,192 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useWallet } from '../contexts/WalletContext';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { shortenAddress } from '../lib/utils';
+import { useToast } from '@/hooks/use-toast';
 
 const Profile = () => {
-  const { connected, address, balance } = useWallet();
+  const { connected, stxAddress, balance, callContract } = useWallet();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('assets');
+  const [kycStatus, setKycStatus] = useState('not_started');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showKycModal, setShowKycModal] = useState(false);
+  const [showAdminKycModal, setShowAdminKycModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [kycFormData, setKycFormData] = useState({
+    fullName: '',
+    email: '',
+    country: '',
+    idType: '',
+    idNumber: '',
+    additionalInfo: ''
+  });
+  const [adminKycData, setAdminKycData] = useState({
+    userAddress: '',
+    ipfsData: '',
+    approved: false
+  });
+
+  const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
+  const CONTRACT_NAME = 'rws';
+  
+  // Simulating admin check - in a real app, this would come from contract data
+  useEffect(() => {
+    // For demonstration, consider the wallet with this specific address as admin
+    if (connected) {
+      const checkIsAdmin = async () => {
+        try {
+          // Here, ideally, we'd check if the user is the admin by making a contract call
+          // For demo purposes, we'll just set a random wallet as admin
+          // In a real implementation, we'd query the contract
+          
+          // Simulate a 20% chance of being admin for demo purposes
+          setIsAdmin(Math.random() < 0.2);
+          
+          // Check KYC status for the connected user
+          await checkKycStatus();
+        } catch (error) {
+          console.error("Error checking admin status:", error);
+        }
+      };
+      
+      checkIsAdmin();
+    }
+  }, [connected, stxAddress]);
+  
+  // Function to check KYC status
+  const checkKycStatus = async () => {
+    if (!connected) return;
+    
+    try {
+      // In a real implementation, we would call the contract to check KYC status
+      // For now, we'll just simulate a random status
+      const statuses = ['not_started', 'pending', 'completed'];
+      const randomStatus = statuses[Math.floor(Math.random() * 3)];
+      setKycStatus(randomStatus);
+    } catch (error) {
+      console.error("Error checking KYC status:", error);
+      setKycStatus('not_started');
+    }
+  };
+  
+  // Function to submit KYC
+  const submitKyc = async () => {
+    if (!connected) {
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to submit your KYC information.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Generate IPFS data hash (in a real implementation, this would upload to IPFS)
+      const ipfsData = generateIpfsHash(kycFormData);
+      
+      // Call the kyc function in the smart contract
+      const result = await callContract({
+        contractAddress: CONTRACT_ADDRESS,
+        contractName: CONTRACT_NAME,
+        functionName: 'kyc',
+        functionArgs: [stxAddress, ipfsData]
+      });
+      
+      if (result && result.value) {
+        toast({
+          title: "KYC Submitted",
+          description: "Your KYC information has been submitted for review.",
+          variant: "default"
+        });
+        
+        // Update KYC status
+        setKycStatus('pending');
+        setShowKycModal(false);
+      } else {
+        throw new Error("Contract call failed");
+      }
+    } catch (error) {
+      console.error("Error submitting KYC:", error);
+      toast({
+        title: "Submission Failed",
+        description: error.message || "There was an error submitting your KYC information.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  // Function for admin to complete KYC for a user
+  const completeKyc = async () => {
+    if (!connected || !isAdmin) {
+      toast({
+        title: "Not Authorized",
+        description: "Only admin can complete KYC verification.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    try {
+      setIsSubmitting(true);
+      
+      // Call the complete-kyc function in the smart contract
+      const result = await callContract({
+        contractAddress: CONTRACT_ADDRESS,
+        contractName: CONTRACT_NAME,
+        functionName: 'complete-kyc',
+        functionArgs: [adminKycData.userAddress, adminKycData.ipfsData]
+      });
+      
+      if (result && result.value) {
+        toast({
+          title: "KYC Verification Completed",
+          description: "User's KYC has been successfully verified.",
+          variant: "default"
+        });
+        
+        setShowAdminKycModal(false);
+      } else {
+        throw new Error("Contract call failed");
+      }
+    } catch (error) {
+      console.error("Error completing KYC:", error);
+      toast({
+        title: "Verification Failed",
+        description: error.message || "There was an error completing the KYC verification.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+  
+  // Helper function to generate IPFS hash
+  const generateIpfsHash = (data) => {
+    const dataString = JSON.stringify(data);
+    const hash = Array.from(dataString)
+      .reduce((hash, char) => (((hash << 5) - hash) + char.charCodeAt(0)) | 0, 0)
+      .toString(16)
+      .replace('-', '');
+      
+    return `ipfs://Qm${hash.padStart(44, 'a')}`;
+  };
+  
+  const handleKycChange = (field, value) => {
+    setKycFormData(prev => ({ ...prev, [field]: value }));
+  };
+  
+  const handleAdminKycChange = (field, value) => {
+    setAdminKycData(prev => ({ ...prev, [field]: value }));
+  };
 
   const handleTabChange = (value) => {
     setActiveTab(value);
@@ -24,22 +204,64 @@ const Profile = () => {
             <div className="ml-4">
               <h1 className="text-xl font-heading font-bold text-secondary">My Profile</h1>
               {connected ? (
-                <p className="text-sm text-neutral-300 font-mono">{shortenAddress(address, 8)}</p>
+                <p className="text-sm text-neutral-300 font-mono">{shortenAddress(stxAddress || '', 8)}</p>
               ) : (
                 <p className="text-sm text-neutral-300 font-mono">Wallet not connected</p>
               )}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 w-full sm:w-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full sm:w-auto">
             <div className="bg-neutral-50 p-3 rounded-lg text-center">
               <p className="text-xs text-neutral-300 mb-1">PXT Balance</p>
-              <p className="font-semibold text-secondary">{balance.pxt} PXT</p>
+              <p className="font-semibold text-secondary">{balance?.pxt || 0} PXT</p>
             </div>
             <div className="bg-neutral-50 p-3 rounded-lg text-center">
               <p className="text-xs text-neutral-300 mb-1">BTC Rewards</p>
-              <p className="font-semibold text-warning">{balance.btc.toFixed(8)}</p>
+              <p className="font-semibold text-warning">{(balance?.btc || 0).toFixed(8)}</p>
+            </div>
+            <div className="bg-neutral-50 p-3 rounded-lg text-center">
+              <p className="text-xs text-neutral-300 mb-1">KYC Status</p>
+              <div className="flex items-center justify-center">
+                <span className={`inline-block w-2 h-2 rounded-full mr-1 ${
+                  kycStatus === 'completed' ? 'bg-success' :
+                  kycStatus === 'pending' ? 'bg-warning' :
+                  'bg-error-500'
+                }`}></span>
+                <p className="font-semibold text-secondary capitalize">
+                  {kycStatus === 'not_started' ? 'Not Started' : kycStatus}
+                </p>
+              </div>
             </div>
           </div>
+        </div>
+        
+        {/* KYC Action Button */}
+        <div className="mt-6 flex justify-end">
+          {kycStatus === 'not_started' && (
+            <Button 
+              className="bg-primary hover:bg-primary-600 text-white"
+              onClick={() => setShowKycModal(true)}
+            >
+              Complete KYC
+            </Button>
+          )}
+          {kycStatus === 'pending' && (
+            <Button 
+              variant="outline"
+              disabled
+              className="border-neutral-200"
+            >
+              KYC Under Review
+            </Button>
+          )}
+          {connected && isAdmin && (
+            <Button 
+              className="bg-secondary hover:bg-secondary-600 text-white ml-4"
+              onClick={() => setShowAdminKycModal(true)}
+            >
+              Admin: Approve KYC
+            </Button>
+          )}
         </div>
       </div>
       
