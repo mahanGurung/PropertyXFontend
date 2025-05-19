@@ -10,7 +10,7 @@ import { shortenAddress, formatCurrency } from '../lib/utils';
 import assets from '../data/asset-data';
 
 const Marketplace = () => {
-  const { connected, stxAddress, callContract, getNftData, getAssetData } = useWallet();
+  const { connected, stxAddress, callContract, getNftData, getAssetData, getMarketplaceListings, fetchIpfsMetadata } = useWallet();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('browse');
   const [nftListings, setNftListings] = useState([]);
@@ -49,57 +49,82 @@ const Marketplace = () => {
         return;
       }
       
-      // For the first version, we'll use some sample token IDs
-      // In a production version, we would query the contract for all tokens
-      const tokenIds = [1, 2, 3, 4, 5, 6];
+      // Get marketplace listings using our new contract integration
+      const marketplaceListings = await getMarketplaceListings();
       
-      // Marketplace listings
-      const marketListings = [];
-      // User owned NFTs
+      // Process listings and fetch metadata from IPFS
+      const processedListings = await Promise.all(
+        marketplaceListings.map(async (listing) => {
+          // Fetch metadata from IPFS if available
+          if (listing.metadataCid) {
+            try {
+              const metadata = await fetchIpfsMetadata(listing.metadataCid);
+              if (metadata) {
+                return {
+                  ...listing,
+                  name: metadata.name || listing.name,
+                  description: metadata.description || listing.description,
+                  assetType: metadata.assetType || listing.assetType,
+                  location: metadata.location || 'Property Location',
+                  attributes: metadata.attributes || []
+                };
+              }
+            } catch (error) {
+              console.error('Error fetching metadata for listing:', error);
+            }
+          }
+          return listing;
+        })
+      );
+      
+      // Separate listings that belong to the current user
+      const userListings = processedListings.filter(listing => listing.owner === stxAddress);
+      const otherListings = processedListings.filter(listing => listing.owner !== stxAddress);
+      
+      // Get user's owned NFTs that are not listed
+      const tokenIds = [1, 2, 3, 4, 5]; // In a real app, we would query all owned tokens
       const ownedNfts = [];
-      // User's listed NFTs
-      const listedNfts = [];
       
-      // Get NFT data from the blockchain
       for (const tokenId of tokenIds) {
         try {
           // Get the owner of this token
           const nftData = await getNftData(tokenId);
           
-          if (nftData && nftData.owner) {
+          // If the current user is the owner and it's not already listed
+          if (nftData && nftData.owner === stxAddress && 
+              !userListings.some(listing => listing.tokenId === tokenId)) {
+            
             // Get the asset details
-            const assetData = await getAssetData(nftData.owner, tokenId);
+            const assetData = await getAssetData(stxAddress, tokenId);
             
             if (assetData) {
-              // Format the data for our UI
-              const assetInfo = {
+              // Check for IPFS metadata
+              let metadataEnhanced = { ...assetData };
+              
+              if (assetData.metadata) {
+                try {
+                  const metadata = await fetchIpfsMetadata(assetData.metadata);
+                  if (metadata) {
+                    metadataEnhanced = {
+                      ...assetData,
+                      name: metadata.name || assetData.name,
+                      description: metadata.description || assetData.description,
+                      assetType: metadata.assetType || 'property',
+                      location: metadata.location || 'Property Location',
+                      attributes: metadata.attributes || []
+                    };
+                  }
+                } catch (error) {
+                  console.error('Error fetching metadata for owned NFT:', error);
+                }
+              }
+              
+              ownedNfts.push({
                 id: tokenId,
                 tokenId: tokenId,
-                name: `PropertyX Asset #${tokenId}`,
-                description: 'Real-world asset tokenized on PropertyX',
-                assetType: 'property',
-                owner: nftData.owner,
-                price: 50000 + (tokenId * 10000), // Sample price
-                currency: 'STX',
-                imageUrl: `https://via.placeholder.com/400x300?text=Property+Asset+${tokenId}`,
-                createdAt: new Date(Date.now() - (tokenId * 24 * 60 * 60 * 1000))
-              };
-              
-              // If this owner is the current user
-              if (nftData.owner === stxAddress) {
-                // If it's for sale
-                if (tokenId % 2 === 0) { // Just for sample purposes
-                  listedNfts.push(assetInfo);
-                } else {
-                  ownedNfts.push({
-                    ...assetInfo,
-                    isListed: false
-                  });
-                }
-              } else {
-                // This is a listing by someone else
-                marketListings.push(assetInfo);
-              }
+                ...metadataEnhanced,
+                isListed: false
+              });
             }
           }
         } catch (error) {
@@ -107,9 +132,16 @@ const Marketplace = () => {
         }
       }
       
-      setNftListings(marketListings);
+      // Update state with the fetched data
+      setNftListings(otherListings);
       setUserNfts(ownedNfts);
-      setMyListings(listedNfts);
+      setMyListings(userListings);
+      
+      console.log('Marketplace data loaded successfully');
+      console.log('Listings:', otherListings);
+      console.log('User NFTs:', ownedNfts);
+      console.log('User Listings:', userListings);
+      
     } catch (error) {
       console.error('Error loading NFT data:', error);
       toast({

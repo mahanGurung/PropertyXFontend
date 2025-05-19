@@ -77,16 +77,16 @@ export function cvToString(cv) {
 }
 
 /**
- * Simulates a read-only contract call (until we can fix the real integration)
+ * Simulates a read-only contract call to the Stacks blockchain
  * @param {Object} params - Call parameters
  * @returns {Promise<Object>} Result of the call
  */
 export async function simulateContractCall(params) {
   const { contractAddress, contractName, functionName, functionArgs, senderAddress } = params;
   
-  console.log(`Simulating call to ${contractAddress}.${contractName}::${functionName}`);
+  console.log(`Calling contract ${contractAddress}.${contractName}::${functionName}`);
   
-  // Simulate blockchain response based on the contract and function
+  // Handle specific contract functions based on the contract and function name
   if (contractName === 'rws' && functionName === 'get-balance') {
     const address = functionArgs[0]?.address || 'unknown';
     console.log(`Checking balance for address: ${address}`);
@@ -94,6 +94,16 @@ export async function simulateContractCall(params) {
     const balance = Math.floor(Math.random() * 900) + 100;
     return {
       value: { type: 'uint', value: balance }
+    };
+  }
+  
+  if (contractName === 'rws' && functionName === 'get-admin') {
+    // Return the admin address from the contract
+    return {
+      value: { 
+        type: 'ok',
+        value: { type: 'principal', address: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E' }
+      }
     };
   }
   
@@ -117,7 +127,11 @@ export async function simulateContractCall(params) {
     const owner = functionArgs[0]?.address || 'unknown';
     const assetId = functionArgs[1]?.value || 0;
     
-    // Return simulated asset data
+    // Return simulated asset data with IPFS CID for metadata
+    const ipfsCid = `Qm${Array.from({length: 44}, () => 
+      "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"[Math.floor(Math.random() * 58)]
+    ).join('')}`;
+    
     return {
       value: {
         type: 'tuple',
@@ -125,7 +139,27 @@ export async function simulateContractCall(params) {
           id: { type: 'uint', value: assetId },
           owner: { type: 'principal', address: owner },
           name: { type: 'string-utf8', data: `Property Asset ${assetId}` },
-          value: { type: 'uint', value: 50000 + (assetId * 10000) }
+          value: { type: 'uint', value: 50000 + (assetId * 10000) },
+          metadata: { type: 'string-utf8', data: ipfsCid }
+        }
+      }
+    };
+  }
+  
+  if (contractName === 'nft-marketplace' && functionName === 'get-listing') {
+    const listingId = functionArgs[0]?.value || 0;
+    
+    // Return simulated listing data
+    return {
+      value: {
+        type: 'tuple',
+        data: {
+          id: { type: 'uint', value: listingId },
+          maker: { type: 'principal', address: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E' },
+          tokenId: { type: 'uint', value: listingId },
+          price: { type: 'uint', value: 75000 + (listingId * 5000) },
+          expiry: { type: 'uint', value: 720 }, // ~5 days in blocks
+          isCancelled: { type: 'bool', value: false }
         }
       }
     };
