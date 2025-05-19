@@ -34,27 +34,39 @@ const Profile = () => {
   const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
   const CONTRACT_NAME = 'rws';
   
-  // Simulating admin check - in a real app, this would come from contract data
+  // Check if user is admin using the contract's get-admin function
   useEffect(() => {
-    // For demonstration, consider the wallet with this specific address as admin
     if (connected) {
-      const checkIsAdmin = async () => {
+      const checkAdminStatus = async () => {
         try {
-          // Here, ideally, we'd check if the user is the admin by making a contract call
-          // For demo purposes, we'll just set a random wallet as admin
-          // In a real implementation, we'd query the contract
+          // Call the get-admin function in the contract to determine if user is admin
+          const result = await callContract({
+            contractAddress: CONTRACT_ADDRESS,
+            contractName: CONTRACT_NAME,
+            functionName: 'get-admin',
+            functionArgs: []
+          });
           
-          // Simulate a 20% chance of being admin for demo purposes
-          setIsAdmin(Math.random() < 0.2);
+          // Parse the result to determine if current user is admin
+          if (result && result.value && result.value.type === 'ok') {
+            const adminAddress = result.value.value.address;
+            const userIsAdmin = adminAddress === stxAddress;
+            setIsAdmin(userIsAdmin);
+            console.log(`Admin check complete. User ${userIsAdmin ? 'is' : 'is not'} admin.`);
+          } else {
+            console.log('Could not determine admin status from contract');
+            setIsAdmin(false);
+          }
           
           // Check KYC status for the connected user
           await checkKycStatus();
         } catch (error) {
           console.error("Error checking admin status:", error);
+          setIsAdmin(false);
         }
       };
       
-      checkIsAdmin();
+      checkAdminStatus();
     }
   }, [connected, stxAddress]);
   

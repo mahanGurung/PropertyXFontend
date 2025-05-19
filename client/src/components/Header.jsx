@@ -10,7 +10,6 @@ const Header = () => {
 
   const navigationItems = [
     { name: 'Home', path: '/' },
-    { name: 'Explore', path: '/explore' },
     { name: 'Tokenize', path: '/tokenize' },
     { name: 'Staking', path: '/staking' },
     { name: 'Marketplace', path: '/marketplace' },
