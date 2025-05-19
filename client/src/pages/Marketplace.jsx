@@ -10,7 +10,7 @@ import { shortenAddress, formatCurrency } from '../lib/utils';
 import assets from '../data/asset-data';
 
 const Marketplace = () => {
-  const { connected, stxAddress, callContract } = useWallet();
+  const { connected, stxAddress, callContract, getNftData, getAssetData } = useWallet();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('browse');
   const [nftListings, setNftListings] = useState([]);
@@ -40,90 +40,76 @@ const Marketplace = () => {
     setIsLoading(true);
     
     try {
-      // In a real implementation, we would query the blockchain for active listings
-      // For demo purposes, we'll use mock data
-      const mockListings = [
-        {
-          id: 1,
-          tokenId: 101,
-          name: 'Downtown Apartment Unit #304',
-          description: 'Premium 2BR apartment with city views in the financial district',
-          assetType: 'apartment',
-          owner: 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-          price: 45000,
-          currency: 'STX',
-          imageUrl: 'https://via.placeholder.com/400x300?text=Apartment+Unit+304',
-          createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
-        },
-        {
-          id: 2,
-          tokenId: 102,
-          name: 'Retail Space #12 - Main Street',
-          description: 'Prime retail space in high-traffic shopping area',
-          assetType: 'retail',
-          owner: 'ST2CY5V39NHDPWSXMW9QDT3HC3GD6Q6XX4CFRK9AG',
-          price: 120000,
-          currency: 'STX',
-          imageUrl: 'https://via.placeholder.com/400x300?text=Retail+Space+12',
-          createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-        },
-        {
-          id: 3,
-          tokenId: 103,
-          name: 'Office Suite #1420 - Tower A',
-          description: 'Modern office space in Class A building with amenities',
-          assetType: 'office',
-          owner: 'ST3NBRSFKX28FQ2ZJ1MAKX58HKHSDGNV5YC7SG3KG',
-          price: 89500,
-          currency: 'STX',
-          imageUrl: 'https://via.placeholder.com/400x300?text=Office+Suite+1420',
-          createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-        }
-      ];
+      if (!connected) {
+        // If not connected, load empty data
+        setNftListings([]);
+        setUserNfts([]);
+        setMyListings([]);
+        setIsLoading(false);
+        return;
+      }
       
-      // Mock user's owned NFTs
-      const mockOwnedNfts = [
-        {
-          id: 4,
-          tokenId: 104,
-          name: 'Luxury Condo #512',
-          description: 'Beachfront luxury condominium with premium amenities',
-          assetType: 'condo',
-          owner: stxAddress || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM', // Use the user's address when connected
-          imageUrl: 'https://via.placeholder.com/400x300?text=Luxury+Condo+512',
-          isListed: false
-        },
-        {
-          id: 5,
-          tokenId: 105,
-          name: 'Industrial Warehouse #7',
-          description: 'Modern distribution center near major transportation hub',
-          assetType: 'industrial',
-          owner: stxAddress || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-          imageUrl: 'https://via.placeholder.com/400x300?text=Industrial+Warehouse+7',
-          isListed: false
-        }
-      ];
+      // For the first version, we'll use some sample token IDs
+      // In a production version, we would query the contract for all tokens
+      const tokenIds = [1, 2, 3, 4, 5, 6];
       
-      // Mock user's active listings
-      const mockMyListings = [
-        {
-          id: 6,
-          tokenId: 106,
-          name: 'Hotel Room #2201',
-          description: 'Income-generating hotel room in 5-star property',
-          assetType: 'hotel',
-          owner: stxAddress || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
-          price: 75000,
-          currency: 'STX',
-          imageUrl: 'https://via.placeholder.com/400x300?text=Hotel+Room+2201',
-          createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000)
-        }
-      ];
+      // Marketplace listings
+      const marketListings = [];
+      // User owned NFTs
+      const ownedNfts = [];
+      // User's listed NFTs
+      const listedNfts = [];
       
-      setNftListings(mockListings);
-      setUserNfts(mockOwnedNfts);
-      setMyListings(mockMyListings);
+      // Get NFT data from the blockchain
+      for (const tokenId of tokenIds) {
+        try {
+          // Get the owner of this token
+          const nftData = await getNftData(tokenId);
+          
+          if (nftData && nftData.owner) {
+            // Get the asset details
+            const assetData = await getAssetData(nftData.owner, tokenId);
+            
+            if (assetData) {
+              // Format the data for our UI
+              const assetInfo = {
+                id: tokenId,
+                tokenId: tokenId,
+                name: `PropertyX Asset #${tokenId}`,
+                description: 'Real-world asset tokenized on PropertyX',
+                assetType: 'property',
+                owner: nftData.owner,
+                price: 50000 + (tokenId * 10000), // Sample price
+                currency: 'STX',
+                imageUrl: `https://via.placeholder.com/400x300?text=Property+Asset+${tokenId}`,
+                createdAt: new Date(Date.now() - (tokenId * 24 * 60 * 60 * 1000))
+              };
+              
+              // If this owner is the current user
+              if (nftData.owner === stxAddress) {
+                // If it's for sale
+                if (tokenId % 2 === 0) { // Just for sample purposes
+                  listedNfts.push(assetInfo);
+                } else {
+                  ownedNfts.push({
+                    ...assetInfo,
+                    isListed: false
+                  });
+                }
+              } else {
+                // This is a listing by someone else
+                marketListings.push(assetInfo);
+              }
+            }
+          }
+        } catch (error) {
+          console.error(`Error fetching data for token ${tokenId}:`, error);
+        }
+      }
+      
+      setNftListings(marketListings);
+      setUserNfts(ownedNfts);
+      setMyListings(listedNfts);
     } catch (error) {
       console.error('Error loading NFT data:', error);
       toast({

@@ -2,7 +2,7 @@ import { useWallet } from '../../contexts/WalletContext';
 import { shortenAddress } from '../../lib/utils';
 
 const ConnectWallet = ({ mobile = false, onClick = () => {} }) => {
-  const { connected, address, connect, disconnect } = useWallet();
+  const { connected, stxAddress, connect, disconnect } = useWallet();
 
   const handleConnect = () => {
     connect();
@@ -30,7 +30,7 @@ const ConnectWallet = ({ mobile = false, onClick = () => {} }) => {
   return (
     <div className={`${mobile ? 'space-y-2' : 'flex items-center space-x-2'}`}>
       <span className={`${mobile ? 'px-3 py-2 text-center' : 'px-3 py-1'} bg-neutral-100 rounded-lg font-mono text-xs`}>
-        {shortenAddress(address, mobile ? 10 : 6)}
+        {shortenAddress(stxAddress || '', mobile ? 10 : 6)}
       </span>
       <button
         onClick={handleDisconnect}
