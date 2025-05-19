@@ -505,6 +505,168 @@ const Profile = () => {
           )}
         </TabsContent>
       </Tabs>
+      
+      {/* KYC Submission Modal */}
+      <Dialog open={showKycModal} onOpenChange={setShowKycModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Complete KYC Verification</DialogTitle>
+            <DialogDescription>
+              Fill out your information below to complete the KYC process. This is required to tokenize assets on PropertyX.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4 py-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label htmlFor="full-name" className="block text-sm font-medium text-neutral-400 mb-1">Full Name</label>
+                <Input 
+                  id="full-name" 
+                  value={kycFormData.fullName}
+                  onChange={(e) => handleKycChange('fullName', e.target.value)}
+                  className="w-full border-neutral-200" 
+                />
+              </div>
+              
+              <div className="col-span-2">
+                <label htmlFor="email" className="block text-sm font-medium text-neutral-400 mb-1">Email Address</label>
+                <Input 
+                  id="email" 
+                  type="email"
+                  value={kycFormData.email}
+                  onChange={(e) => handleKycChange('email', e.target.value)}
+                  className="w-full border-neutral-200" 
+                />
+              </div>
+              
+              <div className="col-span-2">
+                <label htmlFor="country" className="block text-sm font-medium text-neutral-400 mb-1">Country of Residence</label>
+                <Input 
+                  id="country" 
+                  value={kycFormData.country}
+                  onChange={(e) => handleKycChange('country', e.target.value)}
+                  className="w-full border-neutral-200" 
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="id-type" className="block text-sm font-medium text-neutral-400 mb-1">ID Type</label>
+                <Input 
+                  id="id-type" 
+                  value={kycFormData.idType}
+                  onChange={(e) => handleKycChange('idType', e.target.value)}
+                  className="w-full border-neutral-200" 
+                  placeholder="Passport, Driver's License, etc."
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="id-number" className="block text-sm font-medium text-neutral-400 mb-1">ID Number</label>
+                <Input 
+                  id="id-number" 
+                  value={kycFormData.idNumber}
+                  onChange={(e) => handleKycChange('idNumber', e.target.value)}
+                  className="w-full border-neutral-200" 
+                />
+              </div>
+              
+              <div className="col-span-2">
+                <label htmlFor="additional-info" className="block text-sm font-medium text-neutral-400 mb-1">Additional Information</label>
+                <Textarea 
+                  id="additional-info" 
+                  value={kycFormData.additionalInfo}
+                  onChange={(e) => handleKycChange('additionalInfo', e.target.value)}
+                  className="w-full border-neutral-200" 
+                  rows={3}
+                />
+              </div>
+              
+              <div className="col-span-2">
+                <div className="border-2 border-dashed border-neutral-200 rounded-lg p-6 text-center">
+                  <div className="mb-3">
+                    <i className="fas fa-file-image text-3xl text-neutral-300"></i>
+                  </div>
+                  <p className="text-sm text-neutral-300 mb-2">Drag and drop ID documents here, or <span className="text-primary">browse files</span></p>
+                  <p className="text-xs text-neutral-300">Upload photo ID and proof of address (PNG, JPG, PDF)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowKycModal(false)}>Cancel</Button>
+            <Button 
+              className="bg-primary text-white hover:bg-primary-600" 
+              onClick={submitKyc}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit KYC'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Admin KYC Approval Modal */}
+      {isAdmin && (
+        <Dialog open={showAdminKycModal} onOpenChange={setShowAdminKycModal}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle>Admin: Complete KYC Verification</DialogTitle>
+              <DialogDescription>
+                As an admin, you can approve KYC verification for users. This will allow them to tokenize assets.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="grid gap-4 py-4">
+              <div>
+                <label htmlFor="user-address" className="block text-sm font-medium text-neutral-400 mb-1">User Address</label>
+                <Input 
+                  id="user-address" 
+                  value={adminKycData.userAddress}
+                  onChange={(e) => handleAdminKycChange('userAddress', e.target.value)}
+                  className="w-full border-neutral-200" 
+                  placeholder="ST..."
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="ipfs-data" className="block text-sm font-medium text-neutral-400 mb-1">IPFS Data</label>
+                <Input 
+                  id="ipfs-data" 
+                  value={adminKycData.ipfsData}
+                  onChange={(e) => handleAdminKycChange('ipfsData', e.target.value)}
+                  className="w-full border-neutral-200" 
+                  placeholder="ipfs://..."
+                />
+              </div>
+              
+              <div className="flex items-center">
+                <input 
+                  type="checkbox" 
+                  id="approve-kyc" 
+                  checked={adminKycData.approved}
+                  onChange={(e) => handleAdminKycChange('approved', e.target.checked)}
+                  className="h-4 w-4 text-primary focus:ring-primary border-neutral-300 rounded" 
+                />
+                <label htmlFor="approve-kyc" className="ml-2 block text-sm text-neutral-400">
+                  I confirm this user has passed all necessary KYC checks
+                </label>
+              </div>
+            </div>
+            
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAdminKycModal(false)}>Cancel</Button>
+              <Button 
+                className="bg-primary text-white hover:bg-primary-600" 
+                onClick={completeKyc}
+                disabled={isSubmitting || !adminKycData.approved}
+              >
+                {isSubmitting ? 'Processing...' : 'Complete KYC'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 };
