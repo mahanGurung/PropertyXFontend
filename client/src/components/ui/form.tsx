@@ -78,7 +78,15 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <div ref={ref} className={cn("space-y-2", className)} {...props} />
+      <div
+        ref={ref}
+        className={cn(
+          "space-y-2 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-lg p-6 shadow-lg mb-4 relative overflow-hidden",
+          "before:absolute before:top-0 before:left-0 before:right-0 before:h-0.5 before:bg-gradient-to-r before:from-cyan-400 before:to-purple-600",
+          className
+        )}
+        {...props}
+      />
     </FormItemContext.Provider>
   )
 })
@@ -93,7 +101,11 @@ const FormLabel = React.forwardRef<
   return (
     <Label
       ref={ref}
-      className={cn(error && "text-destructive", className)}
+      className={cn(
+        "text-cyan-400 font-semibold uppercase tracking-wider text-sm mb-3",
+        error && "text-red-500",
+        className
+      )}
       htmlFor={formItemId}
       {...props}
     />
@@ -111,6 +123,7 @@ const FormControl = React.forwardRef<
     <Slot
       ref={ref}
       id={formItemId}
+      className="bg-gray-800 border border-gray-700 text-gray-100 rounded-md px-4 py-2 w-full transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent"
       aria-describedby={
         !error
           ? `${formDescriptionId}`
@@ -133,7 +146,7 @@ const FormDescription = React.forwardRef<
     <p
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-sm text-gray-400 mt-1 italic", className)}
       {...props}
     />
   )
@@ -155,7 +168,10 @@ const FormMessage = React.forwardRef<
     <p
       ref={ref}
       id={formMessageId}
-      className={cn("text-sm font-medium text-destructive", className)}
+      className={cn(
+        "text-sm font-medium text-red-400 mt-1 bg-red-900/20 px-2 py-1 rounded",
+        className
+      )}
       {...props}
     >
       {body}

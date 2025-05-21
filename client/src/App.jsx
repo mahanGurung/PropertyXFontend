@@ -9,6 +9,7 @@ import Tokenize from "@/pages/Tokenize";
 import Staking from "@/pages/Staking";
 import Profile from "@/pages/Profile";
 import Marketplace from "./pages/Marketplace";
+import Feedback from "./pages/Feedback";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { WalletProvider } from "./contexts/WalletContext";
@@ -25,6 +26,7 @@ function Router() {
           <Route path="/staking" component={Staking} />
           <Route path="/marketplace" component={Marketplace} />
           <Route path="/profile" component={Profile} />
+          <Route path="/feedback" component={Feedback} />
           <Route component={NotFound} />
         </Switch>
       </main>

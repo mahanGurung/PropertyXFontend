@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { shortenAddress } from '../lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { Link } from 'wouter';
 
 const Profile = () => {
   const { connected, stxAddress, balance, callContract } = useWallet();
@@ -204,42 +205,42 @@ const Profile = () => {
     setActiveTab(value);
   };
 
-  return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+ return (
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
       {/* Profile Header */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+      <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8 border border-gray-700">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
           <div className="flex items-center mb-4 sm:mb-0">
-            <div className="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
               <i className="fas fa-user"></i>
             </div>
             <div className="ml-4">
-              <h1 className="text-xl font-heading font-bold text-secondary">My Profile</h1>
+              <h1 className="text-xl font-bold text-gray-100">My Profile</h1>
               {connected ? (
-                <p className="text-sm text-neutral-300 font-mono">{shortenAddress(stxAddress || '', 8)}</p>
+                <p className="text-sm text-gray-400 font-mono">{shortenAddress(stxAddress || '', 8)}</p>
               ) : (
-                <p className="text-sm text-neutral-300 font-mono">Wallet not connected</p>
+                <p className="text-sm text-gray-400 font-mono">Wallet not connected</p>
               )}
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full sm:w-auto">
-            <div className="bg-neutral-50 p-3 rounded-lg text-center">
-              <p className="text-xs text-neutral-300 mb-1">PXT Balance</p>
-              <p className="font-semibold text-secondary">{balance?.pxt || 0} PXT</p>
+            <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
+              <p className="text-xs text-gray-400 mb-1">PXT Balance</p>
+              <p className="font-semibold text-cyan-400">{balance?.pxt || 0} PXT</p>
             </div>
-            <div className="bg-neutral-50 p-3 rounded-lg text-center">
-              <p className="text-xs text-neutral-300 mb-1">BTC Rewards</p>
-              <p className="font-semibold text-warning">{(balance?.btc || 0).toFixed(8)}</p>
+            <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
+              <p className="text-xs text-gray-400 mb-1">BTC Rewards</p>
+              <p className="font-semibold text-yellow-400">{(balance?.btc || 0).toFixed(8)}</p>
             </div>
-            <div className="bg-neutral-50 p-3 rounded-lg text-center">
-              <p className="text-xs text-neutral-300 mb-1">KYC Status</p>
+            <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
+              <p className="text-xs text-gray-400 mb-1">KYC Status</p>
               <div className="flex items-center justify-center">
                 <span className={`inline-block w-2 h-2 rounded-full mr-1 ${
-                  kycStatus === 'completed' ? 'bg-success' :
-                  kycStatus === 'pending' ? 'bg-warning' :
-                  'bg-error-500'
+                  kycStatus === 'completed' ? 'bg-green-500' :
+                  kycStatus === 'pending' ? 'bg-yellow-400' :
+                  'bg-red-500'
                 }`}></span>
-                <p className="font-semibold text-secondary capitalize">
+                <p className="font-semibold text-gray-100 capitalize">
                   {kycStatus === 'not_started' ? 'Not Started' : kycStatus}
                 </p>
               </div>
@@ -251,27 +252,27 @@ const Profile = () => {
         <div className="mt-6 flex justify-end">
           {kycStatus === 'not_started' && (
             <Button 
-              className="bg-primary hover:bg-primary-600 text-white"
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
               onClick={() => setShowKycModal(true)}
             >
-              Complete KYC
+              <i className="fas fa-id-card mr-2"></i> Complete KYC
             </Button>
           )}
           {kycStatus === 'pending' && (
             <Button 
               variant="outline"
               disabled
-              className="border-neutral-200"
+              className="border-gray-600 text-gray-400"
             >
-              KYC Under Review
+              <i className="fas fa-hourglass-half mr-2"></i> KYC Under Review
             </Button>
           )}
           {connected && isAdmin && (
             <Button 
-              className="bg-secondary hover:bg-secondary-600 text-white ml-4"
+              className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white ml-4"
               onClick={() => setShowAdminKycModal(true)}
             >
-              Admin: Approve KYC
+              <i className="fas fa-user-shield mr-2"></i> Admin: Approve KYC
             </Button>
           )}
         </div>
@@ -283,75 +284,87 @@ const Profile = () => {
         onValueChange={handleTabChange}
         className="w-full"
       >
-        <TabsList className="border-b border-neutral-100 mb-6 grid grid-cols-3 max-w-md">
+        <TabsList className="border-b border-gray-700 mb-6 grid grid-cols-3 max-w-md">
           <TabsTrigger 
             value="assets" 
-            className={`py-4 px-1 relative font-medium text-sm ${activeTab === 'assets' ? 'text-primary border-b-2 border-primary' : 'text-neutral-400 hover:text-primary-600'}`}
+            className={`py-4 px-1 relative font-medium text-sm ${
+              activeTab === 'assets' ? 
+                'text-cyan-400 border-b-2 border-cyan-400' : 
+                'text-gray-400 hover:text-cyan-300'
+            }`}
           >
-            My Assets
+            <i className="fas fa-building mr-2"></i> My Assets
           </TabsTrigger>
           <TabsTrigger 
             value="profits" 
-            className={`py-4 px-1 relative font-medium text-sm ${activeTab === 'profits' ? 'text-primary border-b-2 border-primary' : 'text-neutral-400 hover:text-primary-600'}`}
+            className={`py-4 px-1 relative font-medium text-sm ${
+              activeTab === 'profits' ? 
+                'text-cyan-400 border-b-2 border-cyan-400' : 
+                'text-gray-400 hover:text-cyan-300'
+            }`}
           >
-            Profit History
+            <i className="fas fa-chart-line mr-2"></i> Profit History
           </TabsTrigger>
           <TabsTrigger 
             value="governance" 
-            className={`py-4 px-1 relative font-medium text-sm ${activeTab === 'governance' ? 'text-primary border-b-2 border-primary' : 'text-neutral-400 hover:text-primary-600'}`}
+            className={`py-4 px-1 relative font-medium text-sm ${
+              activeTab === 'governance' ? 
+                'text-cyan-400 border-b-2 border-cyan-400' : 
+                'text-gray-400 hover:text-cyan-300'
+            }`}
           >
-            Governance
+            <i className="fas fa-vote-yea mr-2"></i> Governance
           </TabsTrigger>
         </TabsList>
         
         {/* My Assets Tab */}
         <TabsContent value="assets">
           {!connected ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-primary-50 text-primary rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
+              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-2">Connect Your Wallet</h3>
-              <p className="text-neutral-300 mb-6">Connect your Stacks wallet to view your tokenized assets and investments.</p>
-              <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your tokenized assets and investments.</p>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6 border-b border-neutral-100">
-                <h3 className="font-heading font-semibold text-secondary">Your Tokenized Assets</h3>
+            <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
+              <div className="p-6 border-b border-gray-700">
+                <h3 className="font-semibold text-gray-100">Your Tokenized Assets</h3>
               </div>
               
-              <div className="p-8 text-center border-b border-neutral-100">
-                <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                  <i className="fas fa-building text-xl text-neutral-300"></i>
+              <div className="p-8 text-center border-b border-gray-700">
+                <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                  <i className="fas fa-building text-xl text-gray-400"></i>
                 </div>
-                <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Assets Found</h3>
-                <p className="text-neutral-300 mb-6">You haven't tokenized any assets yet.</p>
-                <Button href="/tokenize" className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
-                  Tokenize Asset
-                </Button>
+                <h3 className="text-lg font-medium text-gray-100 mb-2">No Assets Found</h3>
+                <p className="text-gray-400 mb-6">You haven't tokenized any assets yet.</p>
+                  <Link href="/tokenize" className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+                  <i className="fas fa-token mr-2"></i> Tokenize Asset
+                </Link>
               </div>
               
-              <div className="p-6 border-b border-neutral-100">
-                <h3 className="font-heading font-semibold text-secondary mb-4">Your APT Investments</h3>
+              <div className="p-6 border-b border-gray-700">
+                <h3 className="font-semibold text-gray-100 mb-4">Your APT Investments</h3>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-neutral-100">
-                    <thead>
+                  <table className="min-w-full divide-y divide-gray-700">
+                    <thead className="bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Asset</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Token</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Amount</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Value</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">APR</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Asset</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Token</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Value</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">APR</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-neutral-100">
+                    <tbody className="bg-gray-800 divide-y divide-gray-700">
                       <tr>
                         <td className="px-6 py-4 text-center" colSpan="6">
-                          <p className="text-neutral-300">No APT investments found</p>
+                          <p className="text-gray-400">No APT investments found</p>
                         </td>
                       </tr>
                     </tbody>
@@ -360,22 +373,22 @@ const Profile = () => {
               </div>
               
               <div className="p-6">
-                <h3 className="font-heading font-semibold text-secondary mb-4">Your PXFO Ownership</h3>
+                <h3 className="font-semibold text-gray-100 mb-4">Your PXFO Ownership</h3>
                 <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-neutral-100">
-                    <thead>
+                  <table className="min-w-full divide-y divide-gray-700">
+                    <thead className="bg-gray-700">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Asset</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">PXFO ID</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Ownership %</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Acquired</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Asset</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">PXFO ID</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Ownership %</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Acquired</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="bg-white divide-y divide-neutral-100">
+                    <tbody className="bg-gray-800 divide-y divide-gray-700">
                       <tr>
                         <td className="px-6 py-4 text-center" colSpan="5">
-                          <p className="text-neutral-300">No PXFO ownership found</p>
+                          <p className="text-gray-400">No PXFO ownership found</p>
                         </td>
                       </tr>
                     </tbody>
@@ -389,57 +402,57 @@ const Profile = () => {
         {/* Profit History Tab */}
         <TabsContent value="profits">
           {!connected ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-primary-50 text-primary rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
+              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-2">Connect Your Wallet</h3>
-              <p className="text-neutral-300 mb-6">Connect your Stacks wallet to view your profit history.</p>
-              <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your profit history.</p>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6 border-b border-neutral-100">
-                  <h3 className="font-heading font-semibold text-secondary">APT Profit Distribution</h3>
+              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
+                <div className="p-6 border-b border-gray-700">
+                  <h3 className="font-semibold text-gray-100">APT Profit Distribution</h3>
                 </div>
                 
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-chart-line text-xl text-neutral-300"></i>
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fas fa-chart-line text-xl text-gray-400"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Profit History</h3>
-                  <p className="text-neutral-300">You haven't received any APT profits yet.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Profit History</h3>
+                  <p className="text-gray-400">You haven't received any APT profits yet.</p>
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6 border-b border-neutral-100">
-                  <h3 className="font-heading font-semibold text-secondary">PXFO Profit Distribution</h3>
+              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
+                <div className="p-6 border-b border-gray-700">
+                  <h3 className="font-semibold text-gray-100">PXFO Profit Distribution</h3>
                 </div>
                 
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-chart-pie text-xl text-neutral-300"></i>
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fas fa-chart-pie text-xl text-gray-400"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Ownership Profits</h3>
-                  <p className="text-neutral-300">You haven't received any PXFO ownership profits yet.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Ownership Profits</h3>
+                  <p className="text-gray-400">You haven't received any PXFO ownership profits yet.</p>
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6 border-b border-neutral-100">
-                  <h3 className="font-heading font-semibold text-secondary">BTC Rewards</h3>
+              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
+                <div className="p-6 border-b border-gray-700">
+                  <h3 className="font-semibold text-gray-100">BTC Rewards</h3>
                 </div>
                 
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fab fa-bitcoin text-xl text-neutral-300"></i>
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fab fa-bitcoin text-xl text-gray-400"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No BTC Rewards</h3>
-                  <p className="text-neutral-300">You haven't received any BTC stacking rewards yet.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No BTC Rewards</h3>
+                  <p className="text-gray-400">You haven't received any BTC stacking rewards yet.</p>
                 </div>
               </div>
             </div>
@@ -449,65 +462,65 @@ const Profile = () => {
         {/* Governance Tab */}
         <TabsContent value="governance">
           {!connected ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-primary-50 text-primary rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
+              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-2">Connect Your Wallet</h3>
-              <p className="text-neutral-300 mb-6">Connect your Stacks wallet to participate in governance.</p>
-              <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to participate in governance.</p>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
             </div>
           ) : (
             <div className="space-y-8">
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6 border-b border-neutral-100 flex items-center justify-between">
-                  <h3 className="font-heading font-semibold text-secondary">Active Proposals</h3>
-                  <Button className="bg-primary hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                    Create Proposal
+              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
+                <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+                  <h3 className="font-semibold text-gray-100">Active Proposals</h3>
+                  <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
+                    <i className="fas fa-plus mr-2"></i> Create Proposal
                   </Button>
                 </div>
                 
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-vote-yea text-xl text-neutral-300"></i>
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fas fa-vote-yea text-xl text-gray-400"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Active Proposals</h3>
-                  <p className="text-neutral-300 mb-6">There are no active governance proposals at this time.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Active Proposals</h3>
+                  <p className="text-gray-400 mb-6">There are no active governance proposals at this time.</p>
                 </div>
               </div>
               
-              <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6 border-b border-neutral-100">
-                  <h3 className="font-heading font-semibold text-secondary">Your Voting Power</h3>
+              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
+                <div className="p-6 border-b border-gray-700">
+                  <h3 className="font-semibold text-gray-100">Your Voting Power</h3>
                 </div>
                 
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
-                      <p className="text-sm text-neutral-300 mb-1">PXT Staked</p>
-                      <p className="text-2xl font-semibold text-secondary">0 PXT</p>
+                      <p className="text-sm text-gray-400 mb-1">PXT Staked</p>
+                      <p className="text-2xl font-semibold text-cyan-400">0 PXT</p>
                     </div>
                     <div>
-                      <p className="text-sm text-neutral-300 mb-1">Voting Power</p>
-                      <p className="text-2xl font-semibold text-primary">0 votes</p>
+                      <p className="text-sm text-gray-400 mb-1">Voting Power</p>
+                      <p className="text-2xl font-semibold text-cyan-400">0 votes</p>
                     </div>
                     <div>
-                      <p className="text-sm text-neutral-300 mb-1">Voting History</p>
-                      <p className="text-2xl font-semibold text-neutral-400">0 votes cast</p>
+                      <p className="text-sm text-gray-400 mb-1">Voting History</p>
+                      <p className="text-2xl font-semibold text-gray-400">0 votes cast</p>
                     </div>
                   </div>
                   
                   <div className="mt-6">
                     <div className="flex justify-between mb-1">
-                      <span className="text-xs text-neutral-300">Governance Threshold</span>
-                      <span className="text-xs font-medium">0 / 100,000 PXT</span>
+                      <span className="text-xs text-gray-400">Governance Threshold</span>
+                      <span className="text-xs font-medium text-gray-300">0 / 100,000 PXT</span>
                     </div>
-                    <div className="w-full bg-neutral-100 rounded-full h-2">
-                      <div className="bg-primary h-2 rounded-full" style={{ width: '0%' }}></div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div className="bg-cyan-400 h-2 rounded-full" style={{ width: '0%' }}></div>
                     </div>
-                    <p className="mt-2 text-xs text-neutral-300">
+                    <p className="mt-2 text-xs text-gray-400">
                       Stake at least 100,000 PXT to create governance proposals and participate in voting.
                     </p>
                   </div>
@@ -520,10 +533,10 @@ const Profile = () => {
       
       {/* KYC Submission Modal */}
       <Dialog open={showKycModal} onOpenChange={setShowKycModal}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-gray-100">
           <DialogHeader>
-            <DialogTitle>Complete KYC Verification</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">Complete KYC Verification</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Fill out your information below to complete the KYC process. This is required to tokenize assets on PropertyX.
             </DialogDescription>
           </DialogHeader>
@@ -531,88 +544,98 @@ const Profile = () => {
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label htmlFor="full-name" className="block text-sm font-medium text-neutral-400 mb-1">Full Name</label>
+                <label htmlFor="full-name" className="block text-sm font-medium text-gray-400 mb-1">Full Name</label>
                 <Input 
                   id="full-name" 
                   value={kycFormData.fullName}
                   onChange={(e) => handleKycChange('fullName', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
               
               <div className="col-span-2">
-                <label htmlFor="email" className="block text-sm font-medium text-neutral-400 mb-1">Email Address</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
                 <Input 
                   id="email" 
                   type="email"
                   value={kycFormData.email}
                   onChange={(e) => handleKycChange('email', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
               
               <div className="col-span-2">
-                <label htmlFor="country" className="block text-sm font-medium text-neutral-400 mb-1">Country of Residence</label>
+                <label htmlFor="country" className="block text-sm font-medium text-gray-400 mb-1">Country of Residence</label>
                 <Input 
                   id="country" 
                   value={kycFormData.country}
                   onChange={(e) => handleKycChange('country', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
               
               <div>
-                <label htmlFor="id-type" className="block text-sm font-medium text-neutral-400 mb-1">ID Type</label>
+                <label htmlFor="id-type" className="block text-sm font-medium text-gray-400 mb-1">ID Type</label>
                 <Input 
                   id="id-type" 
                   value={kycFormData.idType}
                   onChange={(e) => handleKycChange('idType', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                   placeholder="Passport, Driver's License, etc."
                 />
               </div>
               
               <div>
-                <label htmlFor="id-number" className="block text-sm font-medium text-neutral-400 mb-1">ID Number</label>
+                <label htmlFor="id-number" className="block text-sm font-medium text-gray-400 mb-1">ID Number</label>
                 <Input 
                   id="id-number" 
                   value={kycFormData.idNumber}
                   onChange={(e) => handleKycChange('idNumber', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
               
               <div className="col-span-2">
-                <label htmlFor="additional-info" className="block text-sm font-medium text-neutral-400 mb-1">Additional Information</label>
+                <label htmlFor="additional-info" className="block text-sm font-medium text-gray-400 mb-1">Additional Information</label>
                 <Textarea 
                   id="additional-info" 
                   value={kycFormData.additionalInfo}
                   onChange={(e) => handleKycChange('additionalInfo', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                   rows={3}
                 />
               </div>
               
               <div className="col-span-2">
-                <div className="border-2 border-dashed border-neutral-200 rounded-lg p-6 text-center">
+                <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
                   <div className="mb-3">
-                    <i className="fas fa-file-image text-3xl text-neutral-300"></i>
+                    <i className="fas fa-file-image text-3xl text-gray-500"></i>
                   </div>
-                  <p className="text-sm text-neutral-300 mb-2">Drag and drop ID documents here, or <span className="text-primary">browse files</span></p>
-                  <p className="text-xs text-neutral-300">Upload photo ID and proof of address (PNG, JPG, PDF)</p>
+                  <p className="text-sm text-gray-400 mb-2">Drag and drop ID documents here, or <span className="text-cyan-400">browse files</span></p>
+                  <p className="text-xs text-gray-500">Upload photo ID and proof of address (PNG, JPG, PDF)</p>
                 </div>
               </div>
             </div>
           </div>
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowKycModal(false)}>Cancel</Button>
             <Button 
-              className="bg-primary text-white hover:bg-primary-600" 
+              variant="outline" 
+              className="border-gray-600 text-gray-300 hover:bg-gray-700" 
+              onClick={() => setShowKycModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white" 
               onClick={submitKyc}
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit KYC'}
+              {isSubmitting ? (
+                <>
+                  <i className="fas fa-spinner fa-spin mr-2"></i> Submitting...
+                </>
+              ) : 'Submit KYC'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -621,33 +644,33 @@ const Profile = () => {
       {/* Admin KYC Approval Modal */}
       {isAdmin && (
         <Dialog open={showAdminKycModal} onOpenChange={setShowAdminKycModal}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-gray-100">
             <DialogHeader>
-              <DialogTitle>Admin: Complete KYC Verification</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-gray-100">Admin: Complete KYC Verification</DialogTitle>
+              <DialogDescription className="text-gray-400">
                 As an admin, you can approve KYC verification for users. This will allow them to tokenize assets.
               </DialogDescription>
             </DialogHeader>
             
             <div className="grid gap-4 py-4">
               <div>
-                <label htmlFor="user-address" className="block text-sm font-medium text-neutral-400 mb-1">User Address</label>
+                <label htmlFor="user-address" className="block text-sm font-medium text-gray-400 mb-1">User Address</label>
                 <Input 
                   id="user-address" 
                   value={adminKycData.userAddress}
                   onChange={(e) => handleAdminKycChange('userAddress', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                   placeholder="ST..."
                 />
               </div>
               
               <div>
-                <label htmlFor="ipfs-data" className="block text-sm font-medium text-neutral-400 mb-1">IPFS Data</label>
+                <label htmlFor="ipfs-data" className="block text-sm font-medium text-gray-400 mb-1">IPFS Data</label>
                 <Input 
                   id="ipfs-data" 
                   value={adminKycData.ipfsData}
                   onChange={(e) => handleAdminKycChange('ipfsData', e.target.value)}
-                  className="w-full border-neutral-200" 
+                  className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                   placeholder="ipfs://..."
                 />
               </div>
@@ -658,22 +681,32 @@ const Profile = () => {
                   id="approve-kyc" 
                   checked={adminKycData.approved}
                   onChange={(e) => handleAdminKycChange('approved', e.target.checked)}
-                  className="h-4 w-4 text-primary focus:ring-primary border-neutral-300 rounded" 
+                  className="h-4 w-4 text-cyan-400 focus:ring-cyan-500 border-gray-600 rounded bg-gray-700" 
                 />
-                <label htmlFor="approve-kyc" className="ml-2 block text-sm text-neutral-400">
+                <label htmlFor="approve-kyc" className="ml-2 block text-sm text-gray-400">
                   I confirm this user has passed all necessary KYC checks
                 </label>
               </div>
             </div>
             
             <DialogFooter>
-              <Button variant="outline" onClick={() => setShowAdminKycModal(false)}>Cancel</Button>
               <Button 
-                className="bg-primary text-white hover:bg-primary-600" 
+                variant="outline" 
+                className="border-gray-600 text-gray-300 hover:bg-gray-700" 
+                onClick={() => setShowAdminKycModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button 
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white" 
                 onClick={completeKyc}
                 disabled={isSubmitting || !adminKycData.approved}
               >
-                {isSubmitting ? 'Processing...' : 'Complete KYC'}
+                {isSubmitting ? (
+                  <>
+                    <i className="fas fa-spinner fa-spin mr-2"></i> Processing...
+                  </>
+                ) : 'Complete KYC'}
               </Button>
             </DialogFooter>
           </DialogContent>

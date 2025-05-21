@@ -3,7 +3,6 @@ import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -135,12 +134,18 @@ const Carousel = React.forwardRef<
         <div
           ref={ref}
           onKeyDownCapture={handleKeyDown}
-          className={cn("relative", className)}
+          className={cn(
+            "relative group",
+            "p-1", // Added padding for glow effect
+            className
+          )}
           role="region"
           aria-roledescription="carousel"
           {...props}
         >
-          {children}
+          <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-800 to-gray-900 p-0.5">
+            {children}
+          </div>
         </div>
       </CarouselContext.Provider>
     )
@@ -155,7 +160,10 @@ const CarouselContent = React.forwardRef<
   const { carouselRef, orientation } = useCarousel()
 
   return (
-    <div ref={carouselRef} className="overflow-hidden">
+    <div 
+      ref={carouselRef} 
+      className="overflow-hidden rounded-lg"
+    >
       <div
         ref={ref}
         className={cn(
@@ -183,6 +191,10 @@ const CarouselItem = React.forwardRef<
       aria-roledescription="slide"
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full",
+        "bg-gray-800/90 backdrop-blur-sm border border-gray-700 rounded-lg",
+        "transition-all duration-300 hover:border-cyan-400/50",
+        "hover:shadow-[0_0_15px_-3px_rgba(34,211,238,0.3)]",
+        "hover:scale-[1.01]",
         orientation === "horizontal" ? "pl-4" : "pt-4",
         className
       )}
@@ -204,17 +216,21 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute  h-8 w-8 rounded-full",
+        "absolute h-12 w-12 rounded-full",
+        "border-gray-600 bg-gray-800/90 text-gray-300",
+        "hover:bg-gray-700 hover:text-white hover:border-cyan-400",
+        "transition-all duration-300 hover:shadow-[0_0_15px_-3px_rgba(34,211,238,0.3)]",
+        "opacity-0 group-hover:opacity-100 backdrop-blur-sm",
         orientation === "horizontal"
-          ? "-left-12 top-1/2 -translate-y-1/2"
-          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-left-16 top-1/2 -translate-y-1/2"
+          : "-top-16 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeft className="h-4 w-4" />
+      <ArrowLeft className="h-6 w-6" />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -233,17 +249,21 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute h-8 w-8 rounded-full",
+        "absolute h-12 w-12 rounded-full",
+        "border-gray-600 bg-gray-800/90 text-gray-300",
+        "hover:bg-gray-700 hover:text-white hover:border-cyan-400",
+        "transition-all duration-300 hover:shadow-[0_0_15px_-3px_rgba(34,211,238,0.3)]",
+        "opacity-0 group-hover:opacity-100 backdrop-blur-sm",
         orientation === "horizontal"
-          ? "-right-12 top-1/2 -translate-y-1/2"
-          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-right-16 top-1/2 -translate-y-1/2"
+          : "-bottom-16 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRight className="h-4 w-4" />
+      <ArrowRight className="h-6 w-6" />
       <span className="sr-only">Next slide</span>
     </Button>
   )

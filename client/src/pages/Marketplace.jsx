@@ -453,23 +453,23 @@ const Marketplace = () => {
   // Render loading state
   if (isLoading && !nftListings.length && !userNfts.length) {
     return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
         <div className="text-center">
-          <h1 className="text-3xl font-heading font-bold text-secondary mb-8">NFT Marketplace</h1>
+          <h1 className="text-3xl font-bold text-gray-100 mb-8">NFT Marketplace</h1>
           <div className="flex justify-center">
-            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
-          <p className="mt-4 text-neutral-300">Loading marketplace data...</p>
+          <p className="mt-4 text-gray-400">Loading marketplace data...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="container  mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-heading font-bold text-secondary">NFT Marketplace</h1>
-        <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold text-gray-100">NFT Marketplace</h1>
+        <p className="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">
           Buy, sell, and manage tokenized real estate NFTs representing fractional ownership of properties.
         </p>
       </div>
@@ -479,55 +479,55 @@ const Marketplace = () => {
         onValueChange={setActiveTab}
         className="w-full mb-8"
       >
-        <TabsList className="grid grid-cols-3 max-w-xl mx-auto mb-8">
+        <TabsList className="grid grid-cols-3 max-w-xl mx-auto mb-8 bg-gray-800 border border-gray-700 rounded-lg p-1">
           <TabsTrigger 
             value="browse" 
-            className={`py-2 px-4 ${activeTab === 'browse' ? 'bg-primary text-white' : 'bg-white text-neutral-400'} rounded-l-lg`}
+            className={`py-2 px-4 ${activeTab === 'browse' ? 'bg-cyan-500 text-white' : 'bg-transparent text-gray-400'} rounded-md transition`}
           >
-            Browse Marketplace
+            <i className="fas fa-store mr-2"></i> Browse
           </TabsTrigger>
           <TabsTrigger 
             value="my-nfts" 
-            className={`py-2 px-4 ${activeTab === 'my-nfts' ? 'bg-primary text-white' : 'bg-white text-neutral-400'}`}
+            className={`py-2 px-4 ${activeTab === 'my-nfts' ? 'bg-cyan-500 text-white' : 'bg-transparent text-gray-400'} rounded-md transition`}
           >
-            My NFTs
+            <i className="fas fa-image mr-2"></i> My NFTs
           </TabsTrigger>
           <TabsTrigger 
             value="my-listings" 
-            className={`py-2 px-4 ${activeTab === 'my-listings' ? 'bg-primary text-white' : 'bg-white text-neutral-400'} rounded-r-lg`}
+            className={`py-2 px-4 ${activeTab === 'my-listings' ? 'bg-cyan-500 text-white' : 'bg-transparent text-gray-400'} rounded-md transition`}
           >
-            My Listings
+            <i className="fas fa-tag mr-2"></i> My Listings
           </TabsTrigger>
         </TabsList>
         
         {/* Browse Marketplace Tab */}
         <TabsContent value="browse">
           {!connected ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-primary-50 text-primary rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700 ">
+              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-2">Connect Your Wallet</h3>
-              <p className="text-neutral-300 mb-6">Connect your Stacks wallet to browse and purchase NFTs.</p>
-              <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to browse and purchase NFTs.</p>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
             </div>
           ) : (
             <>
               {nftListings.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-store text-neutral-300 text-2xl"></i>
+                <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fas fa-store text-gray-400 text-2xl"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Listings Available</h3>
-                  <p className="text-neutral-300">There are no NFTs listed in the marketplace at this time.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Listings Available</h3>
+                  <p className="text-gray-400">There are no NFTs listed in the marketplace at this time.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {nftListings.map((listing) => (
-                    <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                      <div className="h-48 bg-neutral-100 overflow-hidden">
+                    <div key={listing.id} className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 hover:border-cyan-400 transition-colors">
+                      <div className="h-48 bg-gray-700 overflow-hidden">
                         <img 
                           src={listing.imageUrl} 
                           alt={listing.name}
@@ -536,33 +536,33 @@ const Marketplace = () => {
                       </div>
                       <div className="p-4">
                         <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-heading font-semibold text-secondary">{listing.name}</h3>
-                          <div className="px-2 py-1 bg-neutral-100 rounded text-xs font-medium text-neutral-500 capitalize">
+                          <h3 className="text-lg font-semibold text-gray-100">{listing.name}</h3>
+                          <div className="px-2 py-1 bg-gray-700 rounded text-xs font-medium text-gray-300 capitalize">
                             {listing.assetType}
                           </div>
                         </div>
-                        <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{listing.description}</p>
+                        <p className="mt-2 text-sm text-gray-400 line-clamp-2">{listing.description}</p>
                         
                         <div className="mt-4 flex justify-between items-center">
                           <div>
-                            <p className="text-xs text-neutral-400">Price</p>
-                            <p className="text-lg font-semibold text-accent">
+                            <p className="text-xs text-gray-500">Price</p>
+                            <p className="text-lg font-semibold text-cyan-400">
                               {listing.price.toLocaleString()} {listing.currency}
                             </p>
                           </div>
                           <Button 
-                            className="bg-primary hover:bg-primary-600 text-white"
+                            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
                             onClick={() => handlePurchaseNft(listing)}
                           >
-                            Buy Now
+                            <i className="fas fa-shopping-cart mr-2"></i> Buy Now
                           </Button>
                         </div>
                         
-                        <div className="mt-4 pt-4 border-t border-neutral-100 flex justify-between items-center">
-                          <div className="text-xs text-neutral-400">
+                        <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between items-center">
+                          <div className="text-xs text-gray-500">
                             Owner: <span className="font-mono">{shortenAddress(listing.owner, 4)}</span>
                           </div>
-                          <div className="text-xs text-neutral-400">
+                          <div className="text-xs text-gray-500">
                             Listed: {listing.createdAt.toLocaleDateString()}
                           </div>
                         </div>
@@ -578,34 +578,36 @@ const Marketplace = () => {
         {/* My NFTs Tab */}
         <TabsContent value="my-nfts">
           {!connected ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-primary-50 text-primary rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-800  rounded-lg shadow-md p-8 text-center border border-gray-700">
+              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-2">Connect Your Wallet</h3>
-              <p className="text-neutral-300 mb-6">Connect your Stacks wallet to view your NFTs.</p>
-              <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your NFTs.</p>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
             </div>
           ) : (
             <>
               {userNfts.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-image text-neutral-300 text-2xl"></i>
+                <div className="bg-gray-800 rounded-lg shadow-md h-screen p-8 text-center border border-gray-700">
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fas fa-image text-gray-400 text-2xl"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No NFTs Found</h3>
-                  <p className="text-neutral-300 mb-6">You don't own any property NFTs yet.</p>
-                  <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No NFTs Found</h3>
+                  <p className="text-gray-400 mb-6">You don't own any property NFTs yet.</p>
+                  <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition"
+                   onClick={() => setActiveTab('browse')}
+                  >
                     Explore Marketplace
                   </Button>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {userNfts.map((nft) => (
-                    <div key={nft.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                      <div className="h-48 bg-neutral-100 overflow-hidden">
+                    <div key={nft.id} className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 hover:border-cyan-400 transition-colors">
+                      <div className="h-48 bg-gray-700 overflow-hidden">
                         <img 
                           src={nft.imageUrl} 
                           alt={nft.name}
@@ -614,27 +616,27 @@ const Marketplace = () => {
                       </div>
                       <div className="p-4">
                         <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-heading font-semibold text-secondary">{nft.name}</h3>
-                          <div className="px-2 py-1 bg-neutral-100 rounded text-xs font-medium text-neutral-500 capitalize">
+                          <h3 className="text-lg font-semibold text-gray-100">{nft.name}</h3>
+                          <div className="px-2 py-1 bg-gray-700 rounded text-xs font-medium text-gray-300 capitalize">
                             {nft.assetType}
                           </div>
                         </div>
-                        <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{nft.description}</p>
+                        <p className="mt-2 text-sm text-gray-400 line-clamp-2">{nft.description}</p>
                         
                         <div className="mt-4 flex justify-end">
                           <Button 
-                            className="bg-primary hover:bg-primary-600 text-white"
+                            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
                             onClick={() => handleListNft(nft)}
                           >
-                            List for Sale
+                            <i className="fas fa-tag mr-2"></i> List for Sale
                           </Button>
                         </div>
                         
-                        <div className="mt-4 pt-4 border-t border-neutral-100 flex justify-between items-center">
-                          <div className="text-xs text-neutral-400">
+                        <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between items-center">
+                          <div className="text-xs text-gray-500">
                             Token ID: <span className="font-mono">{nft.tokenId}</span>
                           </div>
-                          <div className="text-xs text-neutral-400">
+                          <div className="text-xs text-gray-500">
                             {nft.isListed ? 'Listed' : 'Not Listed'}
                           </div>
                         </div>
@@ -650,27 +652,27 @@ const Marketplace = () => {
         {/* My Listings Tab */}
         <TabsContent value="my-listings">
           {!connected ? (
-            <div className="bg-white rounded-lg shadow-md p-8 text-center">
-              <div className="w-16 h-16 mx-auto bg-primary-50 text-primary rounded-full flex items-center justify-center mb-4">
+            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
+              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-2">Connect Your Wallet</h3>
-              <p className="text-neutral-300 mb-6">Connect your Stacks wallet to view your listings.</p>
-              <Button className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your listings.</p>
+              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
             </div>
           ) : (
             <>
               {myListings.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-md p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-tag text-neutral-300 text-2xl"></i>
+                <div className="bg-gray-800 rounded-lg shadow-md p-8 h-screen text-center border border-gray-700">
+                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
+                    <i className="fas fa-tag text-gray-400 text-2xl"></i>
                   </div>
-                  <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Active Listings</h3>
-                  <p className="text-neutral-300 mb-6">You don't have any active listings. List your NFTs to sell them.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Active Listings</h3>
+                  <p className="text-gray-400 mb-6">You don't have any active listings. List your NFTs to sell them.</p>
                   <Button 
-                    className="bg-primary hover:bg-primary-600 text-white px-6 py-2 rounded-lg text-base font-medium transition"
+                    className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition"
                     onClick={() => setActiveTab('my-nfts')}
                   >
                     Go to My NFTs
@@ -679,8 +681,8 @@ const Marketplace = () => {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {myListings.map((listing) => (
-                    <div key={listing.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                      <div className="h-48 bg-neutral-100 overflow-hidden">
+                    <div key={listing.id} className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 hover:border-cyan-400 transition-colors">
+                      <div className="h-48 bg-gray-700 overflow-hidden">
                         <img 
                           src={listing.imageUrl} 
                           alt={listing.name}
@@ -689,34 +691,34 @@ const Marketplace = () => {
                       </div>
                       <div className="p-4">
                         <div className="flex justify-between items-start">
-                          <h3 className="text-lg font-heading font-semibold text-secondary">{listing.name}</h3>
-                          <div className="px-2 py-1 bg-neutral-100 rounded text-xs font-medium text-neutral-500 capitalize">
+                          <h3 className="text-lg font-semibold text-gray-100">{listing.name}</h3>
+                          <div className="px-2 py-1 bg-gray-700 rounded text-xs font-medium text-gray-300 capitalize">
                             {listing.assetType}
                           </div>
                         </div>
-                        <p className="mt-2 text-sm text-neutral-300 line-clamp-2">{listing.description}</p>
+                        <p className="mt-2 text-sm text-gray-400 line-clamp-2">{listing.description}</p>
                         
                         <div className="mt-4 flex justify-between items-center">
                           <div>
-                            <p className="text-xs text-neutral-400">Listed Price</p>
-                            <p className="text-lg font-semibold text-accent">
+                            <p className="text-xs text-gray-500">Listed Price</p>
+                            <p className="text-lg font-semibold text-cyan-400">
                               {listing.price.toLocaleString()} {listing.currency}
                             </p>
                           </div>
                           <Button 
                             variant="outline"
-                            className="border-error-500 text-error-500 hover:bg-error-50"
+                            className="border-red-500 text-red-400 hover:bg-gray-700"
                             onClick={() => handleCancelListing(listing)}
                           >
-                            Cancel Listing
+                            <i className="fas fa-times mr-2"></i> Cancel
                           </Button>
                         </div>
                         
-                        <div className="mt-4 pt-4 border-t border-neutral-100 flex justify-between items-center">
-                          <div className="text-xs text-neutral-400">
+                        <div className="mt-4 pt-4 border-t border-gray-700 flex justify-between items-center">
+                          <div className="text-xs text-gray-500">
                             Token ID: <span className="font-mono">{listing.tokenId}</span>
                           </div>
-                          <div className="text-xs text-neutral-400">
+                          <div className="text-xs text-gray-500">
                             Listed: {listing.createdAt.toLocaleDateString()}
                           </div>
                         </div>
@@ -732,10 +734,10 @@ const Marketplace = () => {
       
       {/* List NFT Modal */}
       <Dialog open={showListModal} onOpenChange={setShowListModal}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-gray-100">
           <DialogHeader>
-            <DialogTitle>List NFT for Sale</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100">List NFT for Sale</DialogTitle>
+            <DialogDescription className="text-gray-400">
               Set the price and terms for listing your NFT on the marketplace.
             </DialogDescription>
           </DialogHeader>
@@ -743,7 +745,7 @@ const Marketplace = () => {
           {selectedNft && (
             <div className="py-4">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-neutral-100 rounded-lg overflow-hidden">
+                <div className="w-16 h-16 bg-gray-700 rounded-lg overflow-hidden">
                   <img 
                     src={selectedNft.imageUrl} 
                     alt={selectedNft.name}
@@ -751,21 +753,21 @@ const Marketplace = () => {
                   />
                 </div>
                 <div>
-                  <h3 className="font-heading font-semibold text-secondary">{selectedNft.name}</h3>
-                  <p className="text-xs text-neutral-300">Token ID: {selectedNft.tokenId}</p>
+                  <h3 className="font-semibold text-gray-100">{selectedNft.name}</h3>
+                  <p className="text-xs text-gray-500">Token ID: {selectedNft.tokenId}</p>
                 </div>
               </div>
               
               <div className="grid gap-4">
                 <div>
-                  <label htmlFor="listing-price" className="block text-sm font-medium text-neutral-400 mb-1">Listing Price</label>
+                  <label htmlFor="listing-price" className="block text-sm font-medium text-gray-400 mb-1">Listing Price</label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <Input
                       type="number"
                       id="listing-price"
                       value={listingDetails.price}
                       onChange={(e) => setListingDetails({...listingDetails, price: e.target.value})}
-                      className="pr-16 block w-full border-neutral-200"
+                      className="pr-16 block w-full bg-gray-700 border-gray-600 text-gray-100"
                       placeholder="0.00"
                     />
                     <div className="absolute inset-y-0 right-0 flex items-center">
@@ -773,12 +775,12 @@ const Marketplace = () => {
                         value={listingDetails.paymentMethod} 
                         onValueChange={(v) => setListingDetails({...listingDetails, paymentMethod: v})}
                       >
-                        <SelectTrigger className="bg-transparent border-0 pr-3 text-sm w-[70px]">
+                        <SelectTrigger className="bg-gray-700 border-gray-600 text-gray-100 pr-3 text-sm w-[70px]">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="stx">STX</SelectItem>
-                          <SelectItem value="btc">BTC</SelectItem>
+                        <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
+                          <SelectItem value="stx" className="hover:bg-gray-700">STX</SelectItem>
+                          <SelectItem value="btc" className="hover:bg-gray-700">BTC</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -786,26 +788,26 @@ const Marketplace = () => {
                 </div>
                 
                 <div>
-                  <label htmlFor="expiry-days" className="block text-sm font-medium text-neutral-400 mb-1">Listing Duration</label>
+                  <label htmlFor="expiry-days" className="block text-sm font-medium text-gray-400 mb-1">Listing Duration</label>
                   <Select 
                     value={listingDetails.expiryDays.toString()} 
                     onValueChange={(v) => setListingDetails({...listingDetails, expiryDays: parseInt(v)})}
                   >
-                    <SelectTrigger className="w-full border-neutral-200">
+                    <SelectTrigger className="w-full bg-gray-700 border-gray-600 text-gray-100">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="7">7 Days</SelectItem>
-                      <SelectItem value="14">14 Days</SelectItem>
-                      <SelectItem value="30">30 Days</SelectItem>
-                      <SelectItem value="60">60 Days</SelectItem>
-                      <SelectItem value="90">90 Days</SelectItem>
+                    <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
+                      <SelectItem value="7" className="hover:bg-gray-700">7 Days</SelectItem>
+                      <SelectItem value="14" className="hover:bg-gray-700">14 Days</SelectItem>
+                      <SelectItem value="30" className="hover:bg-gray-700">30 Days</SelectItem>
+                      <SelectItem value="60" className="hover:bg-gray-700">60 Days</SelectItem>
+                      <SelectItem value="90" className="hover:bg-gray-700">90 Days</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 
                 <div>
-                  <label htmlFor="target-buyer" className="block text-sm font-medium text-neutral-400 mb-1">
+                  <label htmlFor="target-buyer" className="block text-sm font-medium text-gray-400 mb-1">
                     Target Buyer (Optional)
                   </label>
                   <Input
@@ -813,27 +815,27 @@ const Marketplace = () => {
                     id="target-buyer"
                     value={listingDetails.targetBuyer}
                     onChange={(e) => setListingDetails({...listingDetails, targetBuyer: e.target.value})}
-                    className="block w-full border-neutral-200"
+                    className="block w-full bg-gray-700 border-gray-600 text-gray-100"
                     placeholder="Stacks address (leave empty for public listing)"
                   />
-                  <p className="mt-1 text-xs text-neutral-300">
+                  <p className="mt-1 text-xs text-gray-500">
                     If specified, only this address will be able to purchase your NFT.
                   </p>
                 </div>
               </div>
               
-              <div className="bg-neutral-50 p-4 rounded-md mt-6">
+              <div className="bg-gray-700 p-4 rounded-md mt-6">
                 <div className="flex justify-between mb-2">
-                  <span className="text-sm text-neutral-300">Marketplace Fee (2.5%)</span>
-                  <span className="text-sm font-medium">
+                  <span className="text-sm text-gray-400">Marketplace Fee (2.5%)</span>
+                  <span className="text-sm font-medium text-gray-300">
                     {listingDetails.price ? 
                       `${(parseFloat(listingDetails.price) * 0.025).toFixed(2)} ${listingDetails.paymentMethod.toUpperCase()}` : 
                       '0.00'}
                   </span>
                 </div>
-                <div className="flex justify-between pt-2 border-t border-neutral-100">
-                  <span className="text-sm font-medium text-neutral-400">You Receive</span>
-                  <span className="text-sm font-medium text-secondary">
+                <div className="flex justify-between pt-2 border-t border-gray-600">
+                  <span className="text-sm font-medium text-gray-400">You Receive</span>
+                  <span className="text-sm font-medium text-cyan-400">
                     {listingDetails.price ? 
                       `${(parseFloat(listingDetails.price) * 0.975).toFixed(2)} ${listingDetails.paymentMethod.toUpperCase()}` : 
                       '0.00'}
@@ -844,13 +846,23 @@ const Marketplace = () => {
           )}
           
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowListModal(false)}>Cancel</Button>
             <Button 
-              className="bg-primary text-white hover:bg-primary-600" 
+              variant="outline" 
+              className="border-gray-600 text-gray-300 hover:bg-gray-700" 
+              onClick={() => setShowListModal(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white" 
               onClick={handleSubmitListing}
               disabled={isLoading || !listingDetails.price}
             >
-              {isLoading ? 'Processing...' : 'List NFT'}
+              {isLoading ? (
+                <>
+                  <i className="fas fa-spinner fa-spin mr-2"></i> Processing...
+                </>
+              ) : 'List NFT'}
             </Button>
           </DialogFooter>
         </DialogContent>

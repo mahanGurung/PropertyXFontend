@@ -22,11 +22,14 @@ const Footer = () => {
               <a href="#" className="text-neutral-200 hover:text-white">
                 <i className="fab fa-discord"></i>
               </a>
-              <a href="#" className="text-neutral-200 hover:text-white">
+              <a href="https://github.com/buildersacademyai" className="text-neutral-200 hover:text-white">
                 <i className="fab fa-github"></i>
               </a>
-              <a href="#" className="text-neutral-200 hover:text-white">
+              <a href="https://t.me/+CzSrLytJb0JjZWQ9" className="text-neutral-200 hover:text-white">
                 <i className="fab fa-telegram"></i>
+              </a>
+              <a href="https://www.linkedin.com/company/buildersacademy/" className="text-neutral-200 hover:text-white">
+                <i className="fab fa-linkedin"></i>
               </a>
             </div>
           </div>
@@ -35,10 +38,9 @@ const Footer = () => {
             <h3 className="text-lg font-heading font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li><Link href="/" className="text-neutral-200 hover:text-white text-sm">Home</Link></li>
-              <li><Link href="/explore" className="text-neutral-200 hover:text-white text-sm">Explore Assets</Link></li>
-              <li><Link href="/tokenize" className="text-neutral-200 hover:text-white text-sm">Tokenize Assets</Link></li>
               <li><Link href="/staking" className="text-neutral-200 hover:text-white text-sm">Staking</Link></li>
               <li><Link href="/profile" className="text-neutral-200 hover:text-white text-sm">Profile</Link></li>
+              <li><Link href="/feedback" className="text-neutral-200 hover:text-white text-sm">Feedback</Link></li>
             </ul>
           </div>
           
