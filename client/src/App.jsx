@@ -21,7 +21,6 @@ function Router() {
       <main className="min-h-screen">
         <Switch>
           <Route path="/" component={Home} />
-          <Route path="/explore" component={Explore} />
           <Route path="/tokenize" component={Tokenize} />
           <Route path="/staking" component={Staking} />
           <Route path="/marketplace" component={Marketplace} />

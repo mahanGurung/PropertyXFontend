@@ -11,7 +11,7 @@ const Home = () => {
     <>
       {/* Hero Section */}
       <div className="relative bg-gray-900 overflow-hidden border-b border-gray-800">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div className="  container  mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="lg:col-span-6 xl:col-span-5">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-100 leading-tight">
@@ -71,7 +71,7 @@ const Home = () => {
       </div>
       
       {/* Tokenomics Section */}
-      <div className="bg-gray-900 border-t border-gray-800 py-16">
+      <div className="bg-gray-900 border-t min-h-screen border-gray-800 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-100">Tokenomics</h2>

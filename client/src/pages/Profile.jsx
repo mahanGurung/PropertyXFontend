@@ -206,7 +206,7 @@ const Profile = () => {
   };
 
  return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
+    <div className="min-h-screen  mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
       {/* Profile Header */}
       <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8 border border-gray-700">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
