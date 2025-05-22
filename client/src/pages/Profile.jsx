@@ -33,7 +33,7 @@ const Profile = () => {
   });
 
   const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
-  const CONTRACT_NAME = 'rws';
+  const CONTRACT_NAME = 'test3-rws';
   
   // Check if user is admin using the contract's get-admin function
   useEffect(() => {

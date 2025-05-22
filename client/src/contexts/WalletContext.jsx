@@ -2,8 +2,10 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   UserSession, 
   showConnect, 
-  openContractCall 
+  request,
+  openContractCall
 } from '@stacks/connect';
+import { Cl } from '@stacks/transactions';
 import {
   createPrincipalCV,
   createUintCV,
@@ -335,6 +337,35 @@ export const WalletProvider = ({ children }) => {
       return [];
     }
   };
+
+  //  const addTokenization = async() => {
+  //         if (!connected) {
+  //           alert('Please connect your wallet first');
+  //           return;
+  //         }
+  //         if (connected) {
+            
+  //           const response = await request('stx_callContract', {
+  //             contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.rws',
+  //             functionName: 'add-for-tokenization',
+  //             functionArgs: [
+                              
+  //                             Cl.uint(2),
+  //                             Cl.stringUtf8(formData.assetName),
+  //                             Cl.uint(formData.assetSupply),
+  //                             Cl.stringUtf8("haoje")
+  //                           ],
+  //             // functionArgs: [
+  //             //                 Cl.principal(address),
+  //             //                 Cl.stringUtf8('dsjoenow')
+      
+  //             //               ],
+  //             network: 'testnet'
+  //           })
+            
+  //         }                        
+        
+  //       };
 
   // The context value that will be supplied to any descendants of this provider
   const contextValue = {

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { shortenAddress, formatCurrency } from '../lib/utils';
 import { fetchNFTListings, fetchIPFSMetadata, generateMetadataCID } from '../utils/stacksIndexer';
+import AssetDetailModal from '../components/ui/asset-detail-modal';
 
 const Marketplace = () => {
   const { connected, stxAddress, callContract, getNftData, getAssetData, getMarketplaceListings, fetchIpfsMetadata } = useWallet();
@@ -19,6 +20,8 @@ const Marketplace = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showListModal, setShowListModal] = useState(false);
   const [selectedNft, setSelectedNft] = useState(null);
+  const [assetDetailModal, setAssetDetailModal] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState(null);
   const [listingDetails, setListingDetails] = useState({
     price: '',
     paymentMethod: 'stx',
@@ -41,7 +44,6 @@ const Marketplace = () => {
     
     try {
       if (!connected) {
-        // If not connected, load empty data
         setNftListings([]);
         setUserNfts([]);
         setMyListings([]);
@@ -49,26 +51,21 @@ const Marketplace = () => {
         return;
       }
       
-      // Contract information from the provided smart contract
       const contractAddress = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
       const nftContractName = 'nft';
       const marketplaceContractName = 'nft-marketplace';
       
-      // Fetch marketplace listings using Stacks.js indexer
       console.log('Fetching marketplace listings from the blockchain...');
       const marketplaceListings = await fetchNFTListings(contractAddress, marketplaceContractName);
       
-      // Process listings and fetch metadata from IPFS
       console.log('Processing listings and fetching IPFS metadata...');
       const processedListings = await Promise.all(
         marketplaceListings.map(async (listing) => {
           try {
-            // Fetch metadata from IPFS if available
             if (listing.metadata && listing.metadata.metadataCid) {
               const metadata = await fetchIPFSMetadata(listing.metadata.metadataCid);
               
               if (metadata) {
-                // Return enhanced listing with IPFS metadata
                 return {
                   id: listing.id,
                   tokenId: listing.metadata.tokenId,
@@ -79,16 +76,19 @@ const Marketplace = () => {
                   owner: listing.sender,
                   price: listing.metadata.price,
                   currency: 'STX',
-                  imageUrl: metadata.image || `https://via.placeholder.com/400x300?text=Property+Asset+${listing.metadata.tokenId}`,
+                  imageUrl: `https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80` || `https://via.placeholder.com/400x300?text=Property+Asset+${listing.metadata.tokenId}`,
                   metadataCid: listing.metadata.metadataCid,
                   location: metadata.properties?.location || 'Property Location',
+                  valuation: metadata.properties?.valuation || '$500,000',
+                  apr: metadata.properties?.apr || '8.5%',
+                  tokenPrice: metadata.properties?.tokenPrice || '$10.00',
+                  tokens: metadata.properties?.tokens || '50,000 APT',
                   createdAt: new Date(listing.timestamp),
                   documents: metadata.properties?.documents || []
                 };
               }
             }
             
-            // Fallback if no IPFS metadata found
             return {
               id: listing.id,
               tokenId: listing.metadata?.tokenId || listing.id,
@@ -99,7 +99,11 @@ const Marketplace = () => {
               owner: listing.sender,
               price: listing.metadata?.price || 100000,
               currency: 'STX',
-              imageUrl: `https://via.placeholder.com/400x300?text=Property+Asset+${listing.id}`,
+              imageUrl: `https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80`,
+              valuation: '$500,000',
+              apr: '8.5%',
+              tokenPrice: '$10.00',
+              tokens: '50,000 APT',
               createdAt: new Date(listing.timestamp)
             };
           } catch (error) {
@@ -109,10 +113,7 @@ const Marketplace = () => {
         })
       );
       
-      // Filter out any failed entries
       const validListings = processedListings.filter(listing => listing !== null);
-      
-      // Separate listings that belong to the current user
       const userListings = validListings.filter(listing => listing.owner === stxAddress);
       const otherListings = validListings.filter(listing => listing.owner !== stxAddress);
       
@@ -120,16 +121,11 @@ const Marketplace = () => {
       console.log('User listings:', userListings.length);
       console.log('Marketplace listings:', otherListings.length);
       
-      // Get user's owned NFTs that are not listed
-      // Call the NFT contract to find tokens owned by the current user
       console.log('Fetching user-owned NFTs...');
       const ownedNfts = [];
       
-      // Simulate fetching owned NFTs by querying tokens 1-10
-      // In a real implementation, we would query the contract
       for (let i = 1; i <= 10; i++) {
         try {
-          // Call get-owner function from the NFT contract for each tokenId
           const result = await callContract({
             contractAddress,
             contractName: nftContractName,
@@ -137,12 +133,9 @@ const Marketplace = () => {
             functionArgs: [i]
           });
           
-          // Check if the current user is the owner
           const owner = result?.value?.value?.address;
           
           if (owner === stxAddress && !userListings.some(listing => listing.tokenId === i)) {
-            // Get metadata for this NFT from IPFS
-            // First generate a CID to demonstrate what a real implementation would use
             const metadataCid = `QmNR2n4zywCV61MeMLB6JwPueAPqhbtqMfCMKDRQftUSa${i}`;
             const metadata = await fetchIPFSMetadata(metadataCid);
             
@@ -156,6 +149,10 @@ const Marketplace = () => {
               imageUrl: metadata?.image || `https://via.placeholder.com/400x300?text=My+Asset+${i}`,
               metadataCid: metadataCid,
               location: metadata?.properties?.location || 'Your Property Location',
+              valuation: metadata?.properties?.valuation || '$500,000',
+              apr: metadata?.properties?.apr || '8.5%',
+              tokenPrice: metadata?.properties?.tokenPrice || '$10.00',
+              tokens: metadata?.properties?.tokens || '50,000 APT',
               documents: metadata?.properties?.documents || [],
               isListed: false
             });
@@ -165,7 +162,6 @@ const Marketplace = () => {
         }
       }
       
-      // Update state with the fetched data
       setNftListings(otherListings);
       setUserNfts(ownedNfts);
       setMyListings(userListings);
@@ -193,6 +189,11 @@ const Marketplace = () => {
       targetBuyer: ''
     });
     setShowListModal(true);
+  };
+  
+  const handleAssetClick = (asset) => {
+    setSelectedAsset(asset);
+    setAssetDetailModal(true);
   };
   
   const handleSubmitListing = async () => {
@@ -227,20 +228,15 @@ const Marketplace = () => {
     try {
       setIsLoading(true);
       
-      // Calculate expiry in block height (approximate blocks per day * days)
       const expiryBlocks = Math.floor(144 * listingDetails.expiryDays);
-      
-      // Prepare target buyer parameter (if specified)
       const targetBuyer = listingDetails.targetBuyer.trim() === '' ? null : listingDetails.targetBuyer;
       
-      // Notify user transaction is being processed
       toast({
         title: 'Processing Transaction',
         description: 'Submitting your listing to the blockchain...',
         variant: 'default'
       });
       
-      // Generate a metadata CID for the listing
       const listingMetadata = {
         name: selectedNft.name,
         description: selectedNft.description,
@@ -256,27 +252,25 @@ const Marketplace = () => {
       const metadataCid = generateMetadataCID(listingMetadata);
       console.log(`Generated metadata CID for listing: ${metadataCid}`);
       
-      // Call the list-asset function in the nft-marketplace contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
         contractName: MARKETPLACE_CONTRACT_NAME,
         functionName: 'list-asset',
         functionArgs: [
-          CONTRACT_ADDRESS, // Contract where NFT is deployed
-          NFT_CONTRACT_NAME, // NFT contract name
-          selectedNft.tokenId, // Token ID
-          expiryBlocks, // Expiry in blocks
-          price, // Price in STX
-          listingDetails.paymentMethod === 'stx' ? null : 'ft-contract', // Payment token if not STX
-          metadataCid, // IPFS CID for metadata
-          targetBuyer // Optional target buyer (only they can buy)
+          CONTRACT_ADDRESS,
+          NFT_CONTRACT_NAME,
+          selectedNft.tokenId,
+          expiryBlocks,
+          price,
+          listingDetails.paymentMethod === 'stx' ? null : 'ft-contract',
+          metadataCid,
+          targetBuyer
         ]
       });
       
       console.log('Listing transaction result:', result);
       
       if (result && result.txId) {
-        // Create a new listing object
         const newListing = {
           id: Date.now(),
           tokenId: selectedNft.tokenId,
@@ -290,13 +284,14 @@ const Marketplace = () => {
           createdAt: new Date(),
           txId: result.txId,
           metadataCid: metadataCid,
-          expiryBlocks: expiryBlocks
+          expiryBlocks: expiryBlocks,
+          valuation: selectedNft.valuation,
+          apr: selectedNft.apr,
+          tokenPrice: selectedNft.tokenPrice,
+          tokens: selectedNft.tokens
         };
         
-        // Update UI state with the new listing
         setMyListings([...myListings, newListing]);
-        
-        // Remove from owned NFTs
         setUserNfts(userNfts.filter(nft => nft.id !== selectedNft.id));
         
         toast({
@@ -334,21 +329,6 @@ const Marketplace = () => {
     try {
       setIsLoading(true);
       
-      // This would be the actual call to the smart contract in a real implementation
-      /*
-      const result = await callContract({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: MARKETPLACE_CONTRACT_NAME,
-        functionName: 'cancel-listing',
-        functionArgs: [
-          listing.id,
-          CONTRACT_ADDRESS,
-          NFT_CONTRACT_NAME
-        ]
-      });
-      */
-      
-      // Simulate success
       const canceledNft = {
         id: listing.id,
         tokenId: listing.tokenId,
@@ -357,10 +337,13 @@ const Marketplace = () => {
         assetType: listing.assetType,
         owner: stxAddress || 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM',
         imageUrl: listing.imageUrl,
-        isListed: false
+        isListed: false,
+        valuation: listing.valuation,
+        apr: listing.apr,
+        tokenPrice: listing.tokenPrice,
+        tokens: listing.tokens
       };
       
-      // Update UI state
       setUserNfts([...userNfts, canceledNft]);
       setMyListings(myListings.filter(item => item.id !== listing.id));
       
@@ -394,14 +377,12 @@ const Marketplace = () => {
     try {
       setIsLoading(true);
       
-      // Notify the user that we're processing the transaction
       toast({
         title: 'Processing Transaction',
         description: 'Sending purchase request to the blockchain...',
         variant: 'default'
       });
       
-      // Make the actual call to the smart contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
         contractName: MARKETPLACE_CONTRACT_NAME,
@@ -410,14 +391,12 @@ const Marketplace = () => {
           listing.id,
           CONTRACT_ADDRESS,
           NFT_CONTRACT_NAME,
-          listing.currency !== 'STX' ? 'ft-contract' : null // payment token contract if not STX
+          listing.currency !== 'STX' ? 'ft-contract' : null
         ]
       });
       
-      // Show transaction details
       console.log('Purchase transaction result:', result);
       
-      // The NFT is now owned by the user
       const purchasedNft = {
         id: listing.id,
         tokenId: listing.tokenId,
@@ -426,10 +405,13 @@ const Marketplace = () => {
         assetType: listing.assetType,
         owner: stxAddress,
         imageUrl: listing.imageUrl,
-        isListed: false
+        isListed: false,
+        valuation: listing.valuation,
+        apr: listing.apr,
+        tokenPrice: listing.tokenPrice,
+        tokens: listing.tokens
       };
       
-      // Update UI state
       setUserNfts([...userNfts, purchasedNft]);
       setNftListings(nftListings.filter(item => item.id !== listing.id));
       
@@ -450,7 +432,6 @@ const Marketplace = () => {
     }
   };
   
-  // Render loading state
   if (isLoading && !nftListings.length && !userNfts.length) {
     return (
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
@@ -531,7 +512,8 @@ const Marketplace = () => {
                         <img 
                           src={listing.imageUrl} 
                           alt={listing.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() => handleAssetClick(listing)}
                         />
                       </div>
                       <div className="p-4">
@@ -543,18 +525,38 @@ const Marketplace = () => {
                         </div>
                         <p className="mt-2 text-sm text-gray-400 line-clamp-2">{listing.description}</p>
                         
-                        <div className="mt-4 flex justify-between items-center">
+                        <div className="mt-4 grid grid-cols-2 gap-4 mb-4">
                           <div>
-                            <p className="text-xs text-gray-500">Price</p>
-                            <p className="text-lg font-semibold text-cyan-400">
-                              {listing.price.toLocaleString()} {listing.currency}
-                            </p>
+                            <p className="text-xs text-gray-500">Valuation</p>
+                            <p className="text-sm font-semibold text-gray-300">{listing.valuation}</p>
                           </div>
-                          <Button 
-                            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                          <div>
+                            <p className="text-xs text-gray-500">Token Price</p>
+                            <p className="text-sm font-semibold text-gray-300">{listing.tokenPrice}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">Token Supply</p>
+                            <p className="text-sm font-semibold text-gray-300">{listing.tokens.split(' ')[0]}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">APR</p>
+                            <p className="text-sm font-semibold text-cyan-400">{listing.apr}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+                            onClick={() => handleAssetClick(listing)}
+                          >
+                            View Details
+                          </Button>
+                          <Button
+                            className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
                             onClick={() => handlePurchaseNft(listing)}
                           >
-                            <i className="fas fa-shopping-cart mr-2"></i> Buy Now
+                            Buy Now
                           </Button>
                         </div>
                         
@@ -578,7 +580,7 @@ const Marketplace = () => {
         {/* My NFTs Tab */}
         <TabsContent value="my-nfts">
           {!connected ? (
-            <div className="bg-gray-800  rounded-lg shadow-md p-8 text-center border border-gray-700">
+            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
               <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
@@ -611,7 +613,8 @@ const Marketplace = () => {
                         <img 
                           src={nft.imageUrl} 
                           alt={nft.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() => handleAssetClick(nft)}
                         />
                       </div>
                       <div className="p-4">
@@ -623,12 +626,38 @@ const Marketplace = () => {
                         </div>
                         <p className="mt-2 text-sm text-gray-400 line-clamp-2">{nft.description}</p>
                         
-                        <div className="mt-4 flex justify-end">
-                          <Button 
-                            className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                        <div className="mt-4 grid grid-cols-2 gap-4 mb-4">
+                          <div>
+                            <p className="text-xs text-gray-500">Valuation</p>
+                            <p className="text-sm font-semibold text-gray-300">{nft.valuation}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">Token Price</p>
+                            <p className="text-sm font-semibold text-gray-300">{nft.tokenPrice}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">Token Supply</p>
+                            <p className="text-sm font-semibold text-gray-300">{nft.tokens.split(' ')[0]}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">APR</p>
+                            <p className="text-sm font-semibold text-cyan-400">{nft.apr}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex space-x-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+                            onClick={() => handleAssetClick(nft)}
+                          >
+                            View Details
+                          </Button>
+                          <Button
+                            className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
                             onClick={() => handleListNft(nft)}
                           >
-                            <i className="fas fa-tag mr-2"></i> List for Sale
+                            List for Sale
                           </Button>
                         </div>
                         
@@ -686,7 +715,8 @@ const Marketplace = () => {
                         <img 
                           src={listing.imageUrl} 
                           alt={listing.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover cursor-pointer"
+                          onClick={() => handleAssetClick(listing)}
                         />
                       </div>
                       <div className="p-4">
@@ -698,19 +728,41 @@ const Marketplace = () => {
                         </div>
                         <p className="mt-2 text-sm text-gray-400 line-clamp-2">{listing.description}</p>
                         
-                        <div className="mt-4 flex justify-between items-center">
+                        <div className="mt-4 grid grid-cols-2 gap-4 mb-4">
                           <div>
-                            <p className="text-xs text-gray-500">Listed Price</p>
-                            <p className="text-lg font-semibold text-cyan-400">
+                            <p className="text-xs text-gray-500">Valuation</p>
+                            <p className="text-sm font-semibold text-gray-300">{listing.valuation}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">List Price</p>
+                            <p className="text-sm font-semibold text-cyan-400">
                               {listing.price.toLocaleString()} {listing.currency}
                             </p>
                           </div>
-                          <Button 
+                          <div>
+                            <p className="text-xs text-gray-500">Token Supply</p>
+                            <p className="text-sm font-semibold text-gray-300">{listing.tokens.split(' ')[0]}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs text-gray-500">APR</p>
+                            <p className="text-sm font-semibold text-cyan-400">{listing.apr}</p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex space-x-2">
+                          <Button
                             variant="outline"
-                            className="border-red-500 text-red-400 hover:bg-gray-700"
+                            className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+                            onClick={() => handleAssetClick(listing)}
+                          >
+                            View Details
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="flex-1 border-red-500 text-red-400 hover:bg-gray-700"
                             onClick={() => handleCancelListing(listing)}
                           >
-                            <i className="fas fa-times mr-2"></i> Cancel
+                            Cancel Listing
                           </Button>
                         </div>
                         
@@ -867,6 +919,12 @@ const Marketplace = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      {/* Asset Detail Modal */}
+      <AssetDetailModal 
+        open={assetDetailModal} 
+        onOpenChange={setAssetDetailModal} 
+        asset={selectedAsset} 
+      />
     </div>
   );
 };

@@ -26,6 +26,7 @@ function Router() {
           <Route path="/marketplace" component={Marketplace} />
           <Route path="/profile" component={Profile} />
           <Route path="/feedback" component={Feedback} />
+          <Route path="/explore" component={Explore} />
           <Route component={NotFound} />
         </Switch>
       </main>

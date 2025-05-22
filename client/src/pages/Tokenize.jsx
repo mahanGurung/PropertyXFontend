@@ -6,6 +6,8 @@ import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@
 import { tokenizationSteps } from '../data/tokenomics-data';
 import { useWallet } from '../contexts/WalletContext';
 import { useToast } from '@/hooks/use-toast';
+import { Cl } from '@stacks/transactions';
+import { request } from '@stacks/connect';
 
 const Tokenize = () => {
   const { connected, stxAddress, callContract } = useWallet();
@@ -35,6 +37,35 @@ const Tokenize = () => {
   const prevStep = () => {
     setCurrentStep(currentStep - 1);
   };
+
+  const addTokenization = async() => {
+            if (!connected) {
+              alert('Please connect your wallet first');
+              return;
+            }
+            if (connected) {
+              
+              const response = await request('stx_callContract', {
+                contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.rws1',
+                functionName: 'add-for-tokenization',
+                functionArgs: [
+                                
+                                Cl.uint(4),
+                                Cl.stringUtf8(formData.assetName),
+                                Cl.uint(formData.assetValue),
+                                Cl.stringUtf8("haoje")
+                              ],
+                // functionArgs: [
+                //                 Cl.principal(address),
+                //                 Cl.stringUtf8('dsjoenow')
+        
+                //               ],
+                network: 'testnet'
+              })
+              
+            }                        
+          
+          };
   
   const generateIpfsHash = () => {
     // In a real implementation, you would upload data to IPFS
@@ -321,7 +352,7 @@ const Tokenize = () => {
                       id="token-supply" 
                       className="w-full bg-gray-700 border-gray-600 text-gray-400" 
                       placeholder="e.g. 5000000" 
-                      disabled
+                  
                     />
                     <p className="mt-1 text-xs text-gray-500">Each token equals $1 of asset value</p>
                   </div>
@@ -472,7 +503,7 @@ const Tokenize = () => {
               ) : (
                 <Button
                   type="button"
-                  onClick={submitTokenization}
+                  onClick={addTokenization}
                   disabled={isSubmitting}
                   className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white ml-auto"
                 >
