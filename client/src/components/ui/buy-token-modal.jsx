@@ -44,7 +44,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
 
 
 
-const handlePurchase = () => {
+const handlePurchase = async () => {
   if (!connected) {
     alert('Please connect your wallet first');
     return;
@@ -55,19 +55,24 @@ const handlePurchase = () => {
     return;
   }
 
-  // Get existing purchases from localStorage
-  const storedData = JSON.parse(localStorage.getItem('pxtPurchases') || '{}');
+  try {
+    // Call buy-Pxt function
+    const response = await request('stx_callContract', {
+      contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
+      functionName: 'buy-Pxt',
+      functionArgs: [createUintCV(amount)],
+      network: 'testnet'
+    });
 
-  // Update the purchase amount for this address
-  const previousAmount = parseFloat(storedData[stxAddress] || 0);
-  storedData[stxAddress] = previousAmount + parseFloat(amount);
-
-  // Save updated data back to localStorage
-  localStorage.setItem('pxtPurchases', JSON.stringify(storedData));
-
-  alert(`Purchase of ${amount} PXT successful!`);
-  setAmount('');
-  onOpenChange(false);
+    if (response) {
+      alert(`Purchase of ${amount} PXT successful!`);
+      setAmount('');
+      onOpenChange(false);
+    }
+  } catch (error) {
+    console.error('Error purchasing PXT:', error);
+    alert('Failed to purchase PXT. Please try again.');
+  }
 };
 
 

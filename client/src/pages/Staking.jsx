@@ -23,10 +23,10 @@ const Staking = () => {
   const [tokenizationProposals, setTokenizationProposals] = useState([]);
   const [selectedProposal, setSelectedProposal] = useState(null);
   const [userVote, setUserVote] = useState(null);
-  
+
   const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
   const CONTRACT_NAME = 'rws';
-  
+
   // Function to stake PXT tokens
   const stakePxt = async () => {
     if (!connected) {
@@ -37,7 +37,7 @@ const Staking = () => {
       });
       return;
     }
-    
+
     try {
       const amount = parseInt(pxtStakeAmount) || 0;
       if (amount <= 0) {
@@ -48,14 +48,14 @@ const Staking = () => {
         });
         return;
       }
-      
+
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
         contractName: CONTRACT_NAME,
         functionName: 'stake-pxt',
         functionArgs: [amount]
       });
-      
+
       if (result && result.value) {
         toast({
           title: "Staking Successful",
@@ -75,7 +75,7 @@ const Staking = () => {
       });
     }
   };
-  
+
   // Load tokenization proposals for voting
   useEffect(() => {
     if (connected) {
@@ -116,11 +116,11 @@ const Staking = () => {
           votes: { yes: 550000, no: 400000 }
         }
       ];
-      
+
       setTokenizationProposals(mockProposals);
     }
   }, [connected]);
-  
+
   // Function to submit a vote for a tokenization proposal
   const submitVote = async () => {
     if (!connected) {
@@ -131,7 +131,7 @@ const Staking = () => {
       });
       return;
     }
-    
+
     if (!selectedProposal || userVote === null) {
       toast({
         title: "Invalid selection",
@@ -140,10 +140,10 @@ const Staking = () => {
       });
       return;
     }
-    
+
     try {
       setIsSubmittingVote(true);
-      
+
       // Call the vote-tokenize function in the smart contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
@@ -151,14 +151,14 @@ const Staking = () => {
         functionName: 'vote-tokenize',
         functionArgs: [selectedProposal.assetOwner, selectedProposal.assetId, userVote]
       });
-      
+
       if (result && result.value) {
         toast({
           title: "Vote Submitted",
           description: `Successfully voted ${userVote ? 'YES' : 'NO'} on ${selectedProposal.assetName} tokenization.`,
           variant: "default"
         });
-        
+
         // Update the proposal votes in our local state
         setTokenizationProposals(prevProposals => 
           prevProposals.map(proposal => {
@@ -174,7 +174,7 @@ const Staking = () => {
             return proposal;
           })
         );
-        
+
         setShowVoteModal(false);
         setSelectedProposal(null);
         setUserVote(null);
@@ -221,7 +221,7 @@ const Staking = () => {
           Stake tokens to earn rewards and participate in governance by voting on tokenization proposals.
         </p>
       </div>
-      
+
       <div className="max-w-6xl mx-auto">
         <Tabs 
           value={activeTab} 
@@ -242,7 +242,7 @@ const Staking = () => {
               <i className="fas fa-vote-yea mr-2"></i> Governance
             </TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="staking">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* PXT Staking */}
@@ -251,7 +251,7 @@ const Staking = () => {
                   <h2 className="text-xl font-semibold">Stake PXT Tokens</h2>
                   <p className="text-cyan-200 text-sm">Protocol-wide utility token staking</p>
                 </div>
-                
+
                 <div className="p-6">
                   <div className="mb-6">
                     <div className="flex justify-between mb-2">
@@ -267,7 +267,7 @@ const Staking = () => {
                       <span className="text-sm font-semibold text-gray-100">In 0 days</span>
                     </div>
                   </div>
-                  
+
                   <div className="mb-6">container
                     <h3 className="text-lg font-semibold text-gray-100 mb-3">Benefits</h3>
                     <ul className="space-y-2">
@@ -289,7 +289,7 @@ const Staking = () => {
                       </li>
                     </ul>
                   </div>
-                  
+
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-100 mb-3">Lockup Period</h3>
                     <div className="grid grid-cols-3 gap-2 mb-4">
@@ -322,7 +322,7 @@ const Staking = () => {
                       <span>12 Months</span>
                     </div>
                   </div>
-                  
+
                   <div className="mb-6">
                     <label htmlFor="pxt-stake-amount" className="block text-sm font-medium text-gray-400 mb-1">Amount to Stake</label>
                     <div className="relative">
@@ -340,7 +340,7 @@ const Staking = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Button
                     onClick={stakePxt}
                     className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-4 rounded-lg font-medium transition"
@@ -349,14 +349,14 @@ const Staking = () => {
                   </Button>
                 </div>
               </div>
-              
+
               {/* APT Staking */}
               <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 hover:border-purple-500 transition-colors">
                 <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4">
                   <h2 className="text-xl font-semibold">Stake APT Tokens</h2>
                   <p className="text-purple-200 text-sm">Asset-specific token staking</p>
                 </div>
-                
+
                 <div className="p-6">
                   <div className="mb-6">
                     <div className="flex justify-between mb-2">
@@ -388,7 +388,7 @@ const Staking = () => {
                       <span className="text-sm font-semibold text-gray-100">In 0 days</span>
                     </div>
                   </div>
-                  
+
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-100 mb-3">Benefits</h3>
                     <ul className="space-y-2">
@@ -410,7 +410,7 @@ const Staking = () => {
                       </li>
                     </ul>
                   </div>
-                  
+
                   <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-100 mb-3">Lockup Period</h3>
                     <div className="grid grid-cols-3 gap-2 mb-4">
@@ -443,7 +443,7 @@ const Staking = () => {
                       <span>12 Months</span>
                     </div>
                   </div>
-                  
+
                   <div className="mb-6">
                     <label htmlFor="apt-stake-amount" className="block text-sm font-medium text-gray-400 mb-1">Amount to Stake</label>
                     <div className="relative">
@@ -461,7 +461,7 @@ const Staking = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Button
                     onClick={() => {
                       if (!connected) {
@@ -481,7 +481,7 @@ const Staking = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Staking Stats */}
             <div className="bg-gray-800 rounded-lg shadow-md mt-8 p-6 border border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100 mb-4">Your Staking Stats</h3>
@@ -503,7 +503,7 @@ const Staking = () => {
                   <p className="text-xl font-semibold text-red-400">Not Eligible</p>
                 </div>
               </div>
-              
+
               <div className="mt-6 border-t border-gray-700 pt-6">
                 <h4 className="font-semibold text-gray-100 mb-3">PXFO Eligibility Progress</h4>
                 <div className="mb-2">
@@ -527,11 +527,11 @@ const Staking = () => {
               </div>
             </div>
           </TabsContent>
-          
+
           <TabsContent value="governance">
             <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8 border border-gray-700">
               <h3 className="text-xl font-semibold text-gray-100 mb-4">Asset Tokenization Proposals</h3>
-              
+
               {!connected ? (
                 <div className="text-center p-8">
                   <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
@@ -549,7 +549,7 @@ const Staking = () => {
                     <p className="text-gray-400 text-sm">You have <span className="font-semibold text-gray-100">0 PXT</span> staked, giving you <span className="font-semibold text-cyan-400">0 votes</span>.</p>
                     <p className="text-gray-400 text-sm">Min. stake required: <span className="font-semibold text-gray-100">100 PXT</span></p>
                   </div>
-                  
+
                   <div className="divide-y divide-gray-700">
                     {tokenizationProposals.map((proposal, index) => {
                       const votePercent = calculateVotePercentage(proposal.votes.yes, proposal.votes.no);
@@ -577,7 +577,7 @@ const Staking = () => {
                               </Button>
                             </div>
                           </div>
-                          
+
                           <div className="mb-4">
                             <div className="flex justify-between mb-1">
                               <span className="text-xs text-gray-400">Current Vote</span>
@@ -591,7 +591,7 @@ const Staking = () => {
                               <div className="bg-red-500 h-2" style={{ width: `${votePercent.no}%` }}></div>
                             </div>
                           </div>
-                          
+
                           <div className="grid grid-cols-2 gap-4 text-xs">
                             <div>
                               <p className="text-gray-400">Value: <span className="font-semibold text-gray-100">${proposal.requestedValue.toLocaleString()}</span></p>
@@ -609,7 +609,7 @@ const Staking = () => {
             </div>
           </TabsContent>
         </Tabs>
-        
+
         {/* Voting Modal */}
         <Dialog open={showVoteModal} onOpenChange={setShowVoteModal}>
           <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-gray-100">
@@ -619,12 +619,12 @@ const Staking = () => {
                 Cast your vote to approve or reject this asset tokenization proposal.
               </DialogDescription>
             </DialogHeader>
-            
+
             {selectedProposal && (
               <div className="py-4">
                 <h3 className="text-lg font-semibold text-gray-100 mb-2">{selectedProposal.assetName}</h3>
                 <p className="text-sm text-gray-400 mb-4">{selectedProposal.description}</p>
-                
+
                 <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
                   <div>
                     <p className="text-gray-400 mb-1">Asset ID</p>
@@ -643,7 +643,7 @@ const Staking = () => {
                     <p className="font-medium text-gray-200">{selectedProposal.voteEnds.toLocaleDateString()}</p>
                   </div>
                 </div>
-                
+
                 <div className="mb-6">
                   <h4 className="font-medium text-gray-100 mb-3">Your Vote</h4>
                   <div className="grid grid-cols-2 gap-4">
@@ -663,13 +663,13 @@ const Staking = () => {
                     </Button>
                   </div>
                 </div>
-                
+
                 <div className="bg-gray-700 p-4 rounded-md mb-4">
                   <p className="text-xs text-gray-400">By voting, you are helping to determine whether this real-world asset should be tokenized on the PropertyX platform. Your vote is weighted by your staked PXT amount.</p>
                 </div>
               </div>
             )}
-            
+
             <DialogFooter>
               <Button 
                 variant="outline" 

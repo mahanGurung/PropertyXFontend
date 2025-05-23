@@ -214,6 +214,32 @@ const Profile = () => {
     setActiveTab(value);
   };
 
+ const { connected, stxAddress } = useWallet();
+  const [pxtBalance, setPxtBalance] = useState(0);
+
+  const fetchPxtBalance = async () => {
+    if (!connected || !stxAddress) return;
+
+    try {
+      const response = await request('stx_callContract', {
+        contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
+        functionName: 'get-balance',
+        functionArgs: [createPrincipalCV(stxAddress)],
+        network: 'testnet'
+      });
+
+      if (response) {
+        setPxtBalance(response.value);
+      }
+    } catch (error) {
+      console.error('Error fetching PXT balance:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPxtBalance();
+  }, [connected, stxAddress]);
+
  return (
     <div className="min-h-screen  mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
       {/* Profile Header */}
