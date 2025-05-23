@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { useWallet } from '../../contexts/WalletContext';
 
 const BuyTokenModal = ({ open, onOpenChange }) => {
-  const { connected } = useWallet();
+  const { connected , stxAddress} = useWallet();
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('stx');
-  
+
   const handleAmountChange = (e) => {
     setAmount(e.target.value);
   };
@@ -31,7 +31,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
     if (paymentMethod === 'usdc') return 0.5;
     return 0.00001; // BTC fee
   };
-  
+
   const calculateTotal = () => {
     return calculateSubtotal() + calculateNetworkFee();
   };
@@ -42,17 +42,34 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
     return 'BTC';
   };
 
-  const handlePurchase = () => {
-    if (!connected) {
-      alert('Please connect your wallet first');
-      return;
-    }
-    
-    // Purchase logic would go here
-    alert(`Purchase of ${amount} PXT successful!`);
-    setAmount('');
-    onOpenChange(false);
-  };
+
+
+const handlePurchase = () => {
+  if (!connected) {
+    alert('Please connect your wallet first');
+    return;
+  }
+
+  if (!amount || isNaN(amount)) {
+    alert('Please enter a valid number');
+    return;
+  }
+
+  // Get existing purchases from localStorage
+  const storedData = JSON.parse(localStorage.getItem('pxtPurchases') || '{}');
+
+  // Update the purchase amount for this address
+  const previousAmount = parseFloat(storedData[stxAddress] || 0);
+  storedData[stxAddress] = previousAmount + parseFloat(amount);
+
+  // Save updated data back to localStorage
+  localStorage.setItem('pxtPurchases', JSON.stringify(storedData));
+
+  alert(`Purchase of ${amount} PXT successful!`);
+  setAmount('');
+  onOpenChange(false);
+};
+
 
   if (!open) return null;
 
@@ -75,7 +92,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-6 space-y-4">
           <div>
             <label htmlFor="token-amount" className="block text-sm font-medium text-gray-300 mb-1">Amount to Purchase</label>
@@ -95,7 +112,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
               </div>
             </div>
           </div>
-          
+
           <div>
             <label htmlFor="payment-method" className="block text-sm font-medium text-gray-300 mb-1">Payment Method</label>
             <Select value={paymentMethod} onValueChange={handlePaymentMethodChange}>
@@ -109,7 +126,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="bg-gray-700/50 p-4 rounded-md border border-gray-700">
             <div className="flex justify-between mb-2">
               <span className="text-sm text-gray-400">Exchange Rate</span>
@@ -133,7 +150,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
             </div>
           </div>
         </div>
-        
+
         <div className="mt-4 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-3">
           <Button
             variant="outline"

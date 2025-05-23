@@ -434,9 +434,9 @@ const Marketplace = () => {
   
   if (isLoading && !nftListings.length && !userNfts.length) {
     return (
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
+      <div className="h-screen mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-gray-100 mb-8">NFT Marketplace</h1>
+          <h1 className="text-3xl font-bold text-gray-100 mb-8">Marketplace</h1>
           <div className="flex justify-center">
             <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
           </div>
@@ -449,9 +449,9 @@ const Marketplace = () => {
   return (
     <div className="px-24 mx-auto min-h-screen sm:px-6 lg:px-8 py-8 bg-gray-900">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-100">NFT Marketplace</h1>
+        <h1 className="text-3xl font-bold text-gray-100">Marketplace</h1>
         <p className="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">
-          Buy, sell, and manage tokenized real estate NFTs representing fractional ownership of properties.
+          Buy, sell, and manage tokenized real estate APTs representing fractional parts of properties.
         </p>
       </div>
       
@@ -471,7 +471,7 @@ const Marketplace = () => {
             value="my-nfts" 
             className={`py-2 px-4 ${activeTab === 'my-nfts' ? 'bg-cyan-500 text-white' : 'bg-transparent text-gray-400'} rounded-md transition`}
           >
-            <i className="fas fa-image mr-2"></i> My NFTs
+            <i className="fas fa-image mr-2"></i> My APTs
           </TabsTrigger>
           <TabsTrigger 
             value="my-listings" 
@@ -577,7 +577,7 @@ const Marketplace = () => {
           )}
         </TabsContent>
         
-        {/* My NFTs Tab */}
+        {/* My APTs Tab */}
         <TabsContent value="my-nfts">
           {!connected ? (
             <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
@@ -585,7 +585,7 @@ const Marketplace = () => {
                 <i className="fas fa-wallet text-2xl"></i>
               </div>
               <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
-              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your NFTs.</p>
+              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your APTs.</p>
               <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                 Connect Wallet
               </Button>
@@ -597,8 +597,8 @@ const Marketplace = () => {
                   <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
                     <i className="fas fa-image text-gray-400 text-2xl"></i>
                   </div>
-                  <h3 className="text-lg font-medium text-gray-100 mb-2">No NFTs Found</h3>
-                  <p className="text-gray-400 mb-6">You don't own any property NFTs yet.</p>
+                  <h3 className="text-lg font-medium text-gray-100 mb-2">No APTs Found</h3>
+                  <p className="text-gray-400 mb-6">You don't own any property APTs yet.</p>
                   <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition"
                    onClick={() => setActiveTab('browse')}
                   >
@@ -646,13 +646,13 @@ const Marketplace = () => {
                         </div>
                         
                         <div className="flex space-x-2">
-                          <Button
+                          {/* <Button
                             variant="outline"
                             className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
                             onClick={() => handleAssetClick(nft)}
                           >
                             View Details
-                          </Button>
+                          </Button> */}
                           <Button
                             className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
                             onClick={() => handleListNft(nft)}
@@ -699,12 +699,12 @@ const Marketplace = () => {
                     <i className="fas fa-tag text-gray-400 text-2xl"></i>
                   </div>
                   <h3 className="text-lg font-medium text-gray-100 mb-2">No Active Listings</h3>
-                  <p className="text-gray-400 mb-6">You don't have any active listings. List your NFTs to sell them.</p>
+                  <p className="text-gray-400 mb-6">You don't have any active listings. List your APTs to sell them.</p>
                   <Button 
                     className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition"
                     onClick={() => setActiveTab('my-nfts')}
                   >
-                    Go to My NFTs
+                    Go to My APTs
                   </Button>
                 </div>
               ) : (
@@ -750,13 +750,13 @@ const Marketplace = () => {
                         </div>
                         
                         <div className="flex space-x-2">
-                          <Button
+                          {/* <Button
                             variant="outline"
                             className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
                             onClick={() => handleAssetClick(listing)}
                           >
                             View Details
-                          </Button>
+                          </Button> */}
                           <Button
                             variant="outline"
                             className="flex-1 border-red-500 text-red-400 hover:bg-gray-700"

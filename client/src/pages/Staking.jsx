@@ -539,9 +539,9 @@ const Staking = () => {
                   </div>
                   <h3 className="text-lg font-medium text-gray-100 mb-2">Connect Your Wallet</h3>
                   <p className="text-gray-400 mb-6">Connect your Stacks wallet to view and vote on tokenization proposals.</p>
-                  <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
+                  {/* <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
                     Connect Wallet
-                  </Button>
+                  </Button> */}
                 </div>
               ) : (
                 <div>

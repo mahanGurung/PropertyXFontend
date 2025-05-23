@@ -31,10 +31,19 @@ const Profile = () => {
     ipfsData: '',
     approved: false
   });
+  const [mockBalance, setMockBalance] = useState(0);
 
   const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
   const CONTRACT_NAME = 'test3-rws';
-  
+
+  useEffect(() => {
+  if (connected && stxAddress) {
+    const storedData = JSON.parse(localStorage.getItem('pxtPurchases') || '{}');
+    const userBalance = parseFloat(storedData[stxAddress] || 0);
+    setMockBalance(userBalance);
+  }
+}, [connected, stxAddress]);
+
   // Check if user is admin using the contract's get-admin function
   useEffect(() => {
     if (connected) {
@@ -47,7 +56,7 @@ const Profile = () => {
             functionName: 'get-admin',
             functionArgs: []
           });
-          
+
           // Parse the result to determine if current user is admin
           if (result && result.value && result.value.type === 'ok') {
             const adminAddress = result.value.value.address;
@@ -58,7 +67,7 @@ const Profile = () => {
             console.log('Could not determine admin status from contract');
             setIsAdmin(false);
           }
-          
+
           // Check KYC status for the connected user
           await checkKycStatus();
         } catch (error) {
@@ -66,15 +75,15 @@ const Profile = () => {
           setIsAdmin(false);
         }
       };
-      
+
       checkAdminStatus();
     }
   }, [connected, stxAddress]);
-  
+
   // Function to check KYC status
   const checkKycStatus = async () => {
     if (!connected) return;
-    
+
     try {
       // In a real implementation, we would call the contract to check KYC status
       // For now, we'll just simulate a random status
@@ -86,7 +95,7 @@ const Profile = () => {
       setKycStatus('not_started');
     }
   };
-  
+
   // Function to submit KYC
   const submitKyc = async () => {
     if (!connected) {
@@ -97,13 +106,13 @@ const Profile = () => {
       });
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
-      
+
       // Generate IPFS data hash (in a real implementation, this would upload to IPFS)
       const ipfsData = generateIpfsHash(kycFormData);
-      
+
       // Call the kyc function in the smart contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
@@ -111,14 +120,14 @@ const Profile = () => {
         functionName: 'kyc',
         functionArgs: [stxAddress, ipfsData]
       });
-      
+
       if (result && result.value) {
         toast({
           title: "KYC Submitted",
           description: "Your KYC information has been submitted for review.",
           variant: "default"
         });
-        
+
         // Update KYC status
         setKycStatus('pending');
         setShowKycModal(false);
@@ -136,7 +145,7 @@ const Profile = () => {
       setIsSubmitting(false);
     }
   };
-  
+
   // Function for admin to complete KYC for a user
   const completeKyc = async () => {
     if (!connected || !isAdmin) {
@@ -147,10 +156,10 @@ const Profile = () => {
       });
       return;
     }
-    
+
     try {
       setIsSubmitting(true);
-      
+
       // Call the complete-kyc function in the smart contract
       const result = await callContract({
         contractAddress: CONTRACT_ADDRESS,
@@ -158,14 +167,14 @@ const Profile = () => {
         functionName: 'complete-kyc',
         functionArgs: [adminKycData.userAddress, adminKycData.ipfsData]
       });
-      
+
       if (result && result.value) {
         toast({
           title: "KYC Verification Completed",
           description: "User's KYC has been successfully verified.",
           variant: "default"
         });
-        
+
         setShowAdminKycModal(false);
       } else {
         throw new Error("Contract call failed");
@@ -181,7 +190,7 @@ const Profile = () => {
       setIsSubmitting(false);
     }
   };
-  
+
   // Helper function to generate IPFS hash
   const generateIpfsHash = (data) => {
     const dataString = JSON.stringify(data);
@@ -189,14 +198,14 @@ const Profile = () => {
       .reduce((hash, char) => (((hash << 5) - hash) + char.charCodeAt(0)) | 0, 0)
       .toString(16)
       .replace('-', '');
-      
+
     return `ipfs://Qm${hash.padStart(44, 'a')}`;
   };
-  
+
   const handleKycChange = (field, value) => {
     setKycFormData(prev => ({ ...prev, [field]: value }));
   };
-  
+
   const handleAdminKycChange = (field, value) => {
     setAdminKycData(prev => ({ ...prev, [field]: value }));
   };
@@ -226,7 +235,7 @@ const Profile = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full sm:w-auto">
             <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
               <p className="text-xs text-gray-400 mb-1">PXT Balance</p>
-              <p className="font-semibold text-cyan-400">{balance?.pxt || 0} PXT</p>
+              <p className="font-semibold text-cyan-400">{mockBalance.toFixed(2)}PXT</p>
             </div>
             <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
               <p className="text-xs text-gray-400 mb-1">BTC Rewards</p>
@@ -247,7 +256,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
-        
+
         {/* KYC Action Button */}
         <div className="mt-6 flex justify-end">
           {kycStatus === 'not_started' && (
@@ -277,7 +286,7 @@ const Profile = () => {
           )}
         </div>
       </div>
-      
+
       {/* Tabs */}
       <Tabs 
         value={activeTab} 
@@ -316,7 +325,7 @@ const Profile = () => {
             <i className="fas fa-vote-yea mr-2"></i> Governance
           </TabsTrigger>
         </TabsList>
-        
+
         {/* My Assets Tab */}
         <TabsContent value="assets">
           {!connected ? (
@@ -335,7 +344,7 @@ const Profile = () => {
               <div className="p-6 border-b border-gray-700">
                 <h3 className="font-semibold text-gray-100">Your Tokenized Assets</h3>
               </div>
-              
+
               <div className="p-8 text-center border-b border-gray-700">
                 <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
                   <i className="fas fa-building text-xl text-gray-400"></i>
@@ -346,7 +355,7 @@ const Profile = () => {
                   <i className="fas fa-token mr-2"></i> Tokenize Asset
                 </Link>
               </div>
-              
+
               <div className="p-6 border-b border-gray-700">
                 <h3 className="font-semibold text-gray-100 mb-4">Your APT Investments</h3>
                 <div className="overflow-x-auto">
@@ -371,7 +380,7 @@ const Profile = () => {
                   </table>
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <h3 className="font-semibold text-gray-100 mb-4">Your PXFO Ownership</h3>
                 <div className="overflow-x-auto">
@@ -398,7 +407,7 @@ const Profile = () => {
             </div>
           )}
         </TabsContent>
-        
+
         {/* Profit History Tab */}
         <TabsContent value="profits">
           {!connected ? (
@@ -418,7 +427,7 @@ const Profile = () => {
                 <div className="p-6 border-b border-gray-700">
                   <h3 className="font-semibold text-gray-100">APT Profit Distribution</h3>
                 </div>
-                
+
                 <div className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
                     <i className="fas fa-chart-line text-xl text-gray-400"></i>
@@ -427,12 +436,12 @@ const Profile = () => {
                   <p className="text-gray-400">You haven't received any APT profits yet.</p>
                 </div>
               </div>
-              
+
               <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
                 <div className="p-6 border-b border-gray-700">
                   <h3 className="font-semibold text-gray-100">PXFO Profit Distribution</h3>
                 </div>
-                
+
                 <div className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
                     <i className="fas fa-chart-pie text-xl text-gray-400"></i>
@@ -441,12 +450,12 @@ const Profile = () => {
                   <p className="text-gray-400">You haven't received any PXFO ownership profits yet.</p>
                 </div>
               </div>
-              
+
               <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
                 <div className="p-6 border-b border-gray-700">
                   <h3 className="font-semibold text-gray-100">BTC Rewards</h3>
                 </div>
-                
+
                 <div className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
                     <i className="fab fa-bitcoin text-xl text-gray-400"></i>
@@ -458,7 +467,7 @@ const Profile = () => {
             </div>
           )}
         </TabsContent>
-        
+
         {/* Governance Tab */}
         <TabsContent value="governance">
           {!connected ? (
@@ -481,7 +490,7 @@ const Profile = () => {
                     <i className="fas fa-plus mr-2"></i> Create Proposal
                   </Button>
                 </div>
-                
+
                 <div className="p-8 text-center">
                   <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
                     <i className="fas fa-vote-yea text-xl text-gray-400"></i>
@@ -490,12 +499,12 @@ const Profile = () => {
                   <p className="text-gray-400 mb-6">There are no active governance proposals at this time.</p>
                 </div>
               </div>
-              
+
               <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
                 <div className="p-6 border-b border-gray-700">
                   <h3 className="font-semibold text-gray-100">Your Voting Power</h3>
                 </div>
-                
+
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
@@ -511,7 +520,7 @@ const Profile = () => {
                       <p className="text-2xl font-semibold text-gray-400">0 votes cast</p>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6">
                     <div className="flex justify-between mb-1">
                       <span className="text-xs text-gray-400">Governance Threshold</span>
@@ -530,7 +539,7 @@ const Profile = () => {
           )}
         </TabsContent>
       </Tabs>
-      
+
       {/* KYC Submission Modal */}
       <Dialog open={showKycModal} onOpenChange={setShowKycModal}>
         <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-gray-100">
@@ -540,7 +549,7 @@ const Profile = () => {
               Fill out your information below to complete the KYC process. This is required to tokenize assets on PropertyX.
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
@@ -552,7 +561,7 @@ const Profile = () => {
                   className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
-              
+
               <div className="col-span-2">
                 <label htmlFor="email" className="block text-sm font-medium text-gray-400 mb-1">Email Address</label>
                 <Input 
@@ -563,7 +572,7 @@ const Profile = () => {
                   className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
-              
+
               <div className="col-span-2">
                 <label htmlFor="country" className="block text-sm font-medium text-gray-400 mb-1">Country of Residence</label>
                 <Input 
@@ -573,7 +582,7 @@ const Profile = () => {
                   className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="id-type" className="block text-sm font-medium text-gray-400 mb-1">ID Type</label>
                 <Input 
@@ -584,7 +593,7 @@ const Profile = () => {
                   placeholder="Passport, Driver's License, etc."
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="id-number" className="block text-sm font-medium text-gray-400 mb-1">ID Number</label>
                 <Input 
@@ -594,7 +603,7 @@ const Profile = () => {
                   className="w-full bg-gray-700 border-gray-600 text-gray-100" 
                 />
               </div>
-              
+
               <div className="col-span-2">
                 <label htmlFor="additional-info" className="block text-sm font-medium text-gray-400 mb-1">Additional Information</label>
                 <Textarea 
@@ -605,7 +614,7 @@ const Profile = () => {
                   rows={3}
                 />
               </div>
-              
+
               <div className="col-span-2">
                 <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center">
                   <div className="mb-3">
@@ -617,7 +626,7 @@ const Profile = () => {
               </div>
             </div>
           </div>
-          
+
           <DialogFooter>
             <Button 
               variant="outline" 
@@ -640,7 +649,7 @@ const Profile = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Admin KYC Approval Modal */}
       {isAdmin && (
         <Dialog open={showAdminKycModal} onOpenChange={setShowAdminKycModal}>
@@ -651,7 +660,7 @@ const Profile = () => {
                 As an admin, you can approve KYC verification for users. This will allow them to tokenize assets.
               </DialogDescription>
             </DialogHeader>
-            
+
             <div className="grid gap-4 py-4">
               <div>
                 <label htmlFor="user-address" className="block text-sm font-medium text-gray-400 mb-1">User Address</label>
@@ -663,7 +672,7 @@ const Profile = () => {
                   placeholder="ST..."
                 />
               </div>
-              
+
               <div>
                 <label htmlFor="ipfs-data" className="block text-sm font-medium text-gray-400 mb-1">IPFS Data</label>
                 <Input 
@@ -674,7 +683,7 @@ const Profile = () => {
                   placeholder="ipfs://..."
                 />
               </div>
-              
+
               <div className="flex items-center">
                 <input 
                   type="checkbox" 
@@ -688,7 +697,7 @@ const Profile = () => {
                 </label>
               </div>
             </div>
-            
+
             <DialogFooter>
               <Button 
                 variant="outline" 
