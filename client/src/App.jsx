@@ -39,8 +39,48 @@ function App() {
   return (
     <WalletProvider>
       <QueryClientProvider client={queryClient}>
-        <Router />
-        <Toaster />
+        <Router>
+          <div className="min-h-screen relative overflow-hidden">
+            {/* Futuristic Background */}
+            <div className="futuristic-bg"></div>
+            <div className="light-ray"></div>
+            <div className="light-ray"></div>
+            <div className="light-ray"></div>
+
+            {/* Floating Particles */}
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+            <div className="particle"></div>
+
+            {/* Stardust */}
+            <div className="stardust">✨</div>
+            <div className="stardust">⭐</div>
+            <div className="stardust">✦</div>
+            <div className="stardust">❋</div>
+            <div className="stardust">✧</div>
+
+            <Header />
+            <main className="flex-1 relative z-10">
+              <Switch>
+                <Route path="/" component={Home} />
+                <Route path="/tokenize" component={Tokenize} />
+                <Route path="/staking" component={Staking} />
+                <Route path="/marketplace" component={Marketplace} />
+                <Route path="/profile" component={Profile} />
+                <Route path="/feedback" component={Feedback} />
+                <Route path="/explore" component={Explore} />
+                <Route component={NotFound} />
+              </Switch>
+            </main>
+            <Footer />
+          </div>
+        </Router>
       </QueryClientProvider>
     </WalletProvider>
   );

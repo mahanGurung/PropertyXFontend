@@ -55,7 +55,9 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-700 bg-gray-800 p-1 text-gray-200 shadow-lg data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "z-50 min-w-[12rem] overflow-hidden rounded-xl border border-purple-500/20 bg-black/40 backdrop-blur-xl backdrop-saturate-150 p-2 text-gray-100 shadow-2xl shadow-purple-500/10 ring-1 ring-purple-500/10 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:scale-95 data-[state=open]:scale-100 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 transition-all duration-200 ease-out",
+        "before:absolute before:inset-0 before:rounded-xl before:bg-gradient-to-br before:from-purple-500/5 before:to-cyan-500/5 before:z-[-1]",
+        "after:absolute after:inset-0 after:rounded-xl after:bg-gradient-to-br after:from-white/5 after:to-transparent after:z-[-1]",
         className
       )}
       {...props}
@@ -73,7 +75,14 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-gray-700 focus:text-white data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+      "relative flex cursor-default select-none items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium outline-none transition-all duration-200 ease-out",
+      "hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-cyan-500/10 hover:text-purple-300 hover:shadow-lg hover:shadow-purple-500/20",
+      "focus:bg-gradient-to-r focus:from-purple-500/15 focus:to-cyan-500/15 focus:text-purple-200 focus:ring-2 focus:ring-purple-500/20",
+      "active:scale-[0.98] active:bg-gradient-to-r active:from-purple-500/20 active:to-cyan-500/20",
+      "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "before:absolute before:inset-0 before:rounded-lg before:bg-gradient-to-r before:from-transparent before:via-purple-500/5 before:to-transparent before:opacity-0 before:transition-opacity before:duration-200",
+      "hover:before:opacity-100",
+      "[&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&_svg]:text-purple-400",
       inset && "pl-8",
       className
     )}
@@ -136,7 +145,7 @@ const DropdownMenuLabel = React.forwardRef<
   <DropdownMenuPrimitive.Label
     ref={ref}
     className={cn(
-      "px-2 py-1.5 text-sm font-semibold text-gray-400",
+      "px-3 py-2 text-xs font-bold uppercase tracking-wider text-purple-400/80 bg-gradient-to-r from-purple-500/5 to-cyan-500/5 rounded-md mb-1",
       inset && "pl-8",
       className
     )}
@@ -151,7 +160,10 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-gray-700", className)}
+    className={cn(
+      "-mx-1 my-2 h-px bg-gradient-to-r from-transparent via-purple-500/30 to-transparent shadow-sm shadow-purple-500/20",
+      className
+    )}
     {...props}
   />
 ))
