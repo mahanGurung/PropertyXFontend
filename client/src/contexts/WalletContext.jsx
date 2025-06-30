@@ -87,18 +87,7 @@ export const WalletProvider = ({ children }) => {
   };
 
 
-  const startPxtPurchase = async () => {
-    if (!connected){
-      const response = await request('stx_callContract', {
-        contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
-        functionName: 'stop-pxt-sale',
-        functionArgs: [
-                        Cl.bool(false)
-                      ],
-        network: 'testnet'
-      })
-    }
-  }
+  
 
   // Connect to wallet
   const getConnect = async () => {
@@ -414,7 +403,6 @@ export const WalletProvider = ({ children }) => {
     checkIsAdmin,
     fetchIpfsMetadata,
     getMarketplaceListings,
-    startPxtPurchase,
   };
 
   return (

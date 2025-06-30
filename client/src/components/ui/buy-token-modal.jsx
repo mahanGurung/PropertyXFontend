@@ -4,8 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '../../contexts/WalletContext';
-import { request } from '@stacks/connect';
-import { Cl } from '@stacks/transactions'
 
 const BuyTokenModal = ({ open, onOpenChange }) => {
   const { connected , stxAddress, } = useWallet();
@@ -46,6 +44,7 @@ const BuyTokenModal = ({ open, onOpenChange }) => {
 
 
 
+
 const handlePurchase = async () => {
   if (!connected) {
     alert('Please connect your wallet first');
@@ -58,23 +57,12 @@ const handlePurchase = async () => {
   }
 
   try {
-    // Call buy-Pxt function
-    const response = await request('stx_callContract', {
-      contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
-      functionName: 'buy-Pxt',
-      functionArgs: [Cl.uint(amount)],
-      network: 'testnet',
-      postConditionMode: 'allow'
-    });
-
-    if (response) {
-      alert(`Purchase of ${amount} PXT successful!`);
-      setAmount('');
-      onOpenChange(false);
-    }
+    alert('Purchase functionality has been removed.');
+    setAmount('');
+    onOpenChange(false);
   } catch (error) {
-    console.error('Error purchasing PXT:', error);
-    alert('Failed to purchase PXT. Please try again.');
+    console.error('Error during hypothetical purchase:', error);
+    alert('Simulated purchase failed. Please try again.');
   }
 };
 
@@ -91,11 +79,11 @@ const handlePurchase = async () => {
           </div>
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
             <h3 className="text-lg font-medium leading-6 text-white" id="modal-title">
-              Buy PXT Tokens
+              Buy Tokens
             </h3>
             <div className="mt-2">
               <p className="text-sm text-gray-400">
-                Purchase PropertyX utility tokens (PXT) to participate in staking, governance, and PXFO eligibility.
+                Purchase tokens to participate in staking and governance.
               </p>
             </div>
           </div>
@@ -116,7 +104,7 @@ const handlePurchase = async () => {
                 className="bg-gray-700 border-gray-600 text-white focus:ring-cyan-500 focus:border-cyan-500 block w-full pr-12"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                <span className="text-gray-400 sm:text-sm">PXT</span>
+                <span className="text-gray-400 sm:text-sm">Tokens</span>
               </div>
             </div>
           </div>
@@ -138,7 +126,7 @@ const handlePurchase = async () => {
           <div className="bg-gray-700/50 p-4 rounded-md border border-gray-700">
             <div className="flex justify-between mb-2">
               <span className="text-sm text-gray-400">Exchange Rate</span>
-              <span className="text-sm font-medium text-cyan-400">1 PXT = {
+              <span className="text-sm font-medium text-cyan-400">1 Token = {
                 paymentMethod === 'stx' ? '0.01 STX' :
                 paymentMethod === 'usdc' ? '0.01 USDC' :
                 '0.0000003 BTC'

@@ -435,25 +435,16 @@ const Tokenize = () => {
                   
                   <h3 className="text-lg font-semibold text-cyan-400 mb-3">Token Distribution</h3>
                   <p className="text-sm text-gray-400 mb-4">
-                    Your asset will generate APT tokens and PXFO NFTs according to PropertyX Protocol standards.
+                    Your asset will generate APT tokens according to PropertyX Protocol standards.
                   </p>
                   
                   <div className="flex justify-center mb-4">
-                    <div className="flex items-center justify-center space-x-8">
-                      <div className="text-center">
-                        <div className="w-20 h-20 bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-cyan-400">
-                          <i className="fas fa-coins text-2xl"></i>
-                        </div>
-                        <p className="text-sm font-medium text-gray-200">APT Tokens</p>
-                        <p className="text-xs text-gray-500">Cash Flow Rights</p>
+                    <div className="text-center">
+                      <div className="w-24 h-24 bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-cyan-400 glow-effect">
+                        <i className="fas fa-coins text-3xl"></i>
                       </div>
-                      <div className="text-center">
-                        <div className="w-20 h-20 bg-gray-700 text-yellow-400 rounded-full flex items-center justify-center mx-auto mb-2 border border-yellow-400">
-                          <i className="fas fa-certificate text-2xl"></i>
-                        </div>
-                        <p className="text-sm font-medium text-gray-200">PXFO NFTs</p>
-                        <p className="text-xs text-gray-500">Ownership Rights</p>
-                      </div>
+                      <p className="text-lg font-medium text-gray-200">APT Tokens</p>
+                      <p className="text-sm text-gray-500">Cash Flow Rights & Asset Investment</p>
                     </div>
                   </div>
                 </div>

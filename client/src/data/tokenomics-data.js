@@ -33,18 +33,19 @@ export const benefitsData = [
 
 export const tokenomicsData = [
   {
-    name: 'PropertyX-Token (PXT)',
+    name: 'PXT (PropertyX Token)',
     color: 'primary',
-    description: 'Protocol-wide utility token for governance, staking rewards, and value accrual.',
+    description: 'The utility token of the PropertyX Protocol. Used for governance, staking, and accessing premium features.',
     features: [
-      'Fixed supply of 1 billion PXT',
-      '5-10% of asset profits used for buybacks',
-      'Governance rights (1 PXT = 1 vote)',
-      'Staking yields 2-4% APY + BTC rewards'
+      'Governance voting rights',
+      'Staking rewards (2-4% APY)',
+      'BTC yield participation',
+      'Asset tokenization voting',
+      'Protocol fee discounts'
     ],
     button: {
-      text: 'Buy PXT',
-      action: 'buyPxt'
+      text: 'Start Staking',
+      action: 'staking'
     }
   },
   {
@@ -60,21 +61,6 @@ export const tokenomicsData = [
     button: {
       text: 'Explore Assets',
       action: 'exploreAssets'
-    }
-  },
-  {
-    name: 'PropertyX-FO (PXFO)',
-    color: 'warning',
-    description: 'Non-fungible tokens representing fractional ownership of assets.',
-    features: [
-      '0.01% ownership per PXFO NFT',
-      '10,000 PXFO per asset (100% ownership)',
-      'Eligibility: 50,000+ APT or 100,000+ PXT',
-      'Share of 40% asset owner profits'
-    ],
-    button: {
-      text: 'Stake to Qualify',
-      action: 'stakeToQualify'
     }
   }
 ];

@@ -287,10 +287,7 @@ const Staking = () => {
                         <i className="fas fa-check-circle text-cyan-400 mt-1 mr-2"></i>
                         <span className="text-gray-400 text-sm">Governance rights (1 PXT = 1 vote)</span>
                       </li>
-                      <li className="flex items-start">
-                        <i className="fas fa-check-circle text-cyan-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">PXFO eligibility: 100,000+ PXT</span>
-                      </li>
+                      
                     </ul>
                   </div>
 
@@ -408,10 +405,7 @@ const Staking = () => {
                         <i className="fas fa-check-circle text-purple-400 mt-1 mr-2"></i>
                         <span className="text-gray-400 text-sm">Cash flow rights to 45% of asset profits</span>
                       </li>
-                      <li className="flex items-start">
-                        <i className="fas fa-check-circle text-purple-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">PXFO eligibility: 50,000+ APT</span>
-                      </li>
+                      
                     </ul>
                   </div>
 
@@ -503,32 +497,12 @@ const Staking = () => {
                   <p className="text-2xl font-semibold text-yellow-400">0.00000000 BTC</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-400 mb-1">PXFO Eligibility</p>
-                  <p className="text-xl font-semibold text-red-400">Not Eligible</p>
+                  <p className="text-sm text-gray-400 mb-1">Active Stakes</p>
+                  <p className="text-xl font-semibold text-cyan-400">0</p>
                 </div>
               </div>
 
-              <div className="mt-6 border-t border-gray-700 pt-6">
-                <h4 className="font-semibold text-gray-100 mb-3">PXFO Eligibility Progress</h4>
-                <div className="mb-2">
-                  <div className="flex justify-between mb-1">
-                    <span className="text-xs text-gray-400">PXT Requirement</span>
-                    <span className="text-xs font-medium text-gray-300">0 / 100,000 PXT</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-cyan-400 h-2 rounded-full" style={{ width: '0%' }}></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span className="text-xs text-gray-400">APT Requirement (any token)</span>
-                    <span className="text-xs font-medium text-gray-300">0 / 50,000 APT</span>
-                  </div>
-                  <div className="w-full bg-gray-700 rounded-full h-2">
-                    <div className="bg-purple-400 h-2 rounded-full" style={{ width: '0%' }}></div>
-                  </div>
-                </div>
-              </div>
+              
             </div>
           </TabsContent>
 

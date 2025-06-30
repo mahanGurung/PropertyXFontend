@@ -1,11 +1,8 @@
-import { useState } from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import BuyTokenModal from '../components/ui/buy-token-modal';
 import { benefitsData, tokenomicsData } from '../data/tokenomics-data';
 
 const Home = () => {
-  const [buyTokenModal, setBuyTokenModal] = useState(false);
 
   return (
     <>
@@ -22,16 +19,15 @@ const Home = () => {
                 Access property investments with lower barriers and higher liquidity.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button 
-                  onClick={() => setBuyTokenModal(true)} 
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium shadow-lg transition flex items-center justify-center"
-                >
-                  <i className="fas fa-coins mr-2"></i> Buy PXT Token
-                </Button>
                 <Link href="/marketplace"
-                  className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium shadow-lg transition flex items-center justify-center"
+                  className="sparkle-button bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-3 rounded-lg text-base font-medium shadow-lg transition flex items-center justify-center relative overflow-hidden"
                 >
                   <i className="fas fa-search mr-2"></i> Explore Assets
+                </Link>
+                <Link href="/tokenize"
+                  className="glow-button bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-3 rounded-lg text-base font-medium shadow-lg transition flex items-center justify-center"
+                >
+                  <i className="fas fa-plus mr-2"></i> Tokenize Asset
                 </Link>
               </div>
             </div>
@@ -102,27 +98,15 @@ const Home = () => {
                   ))}
                 </ul>
                 <div className="mt-6">
-                  {token.button.action === 'buyPxt' ? (
-                    <Button 
-                      onClick={() => setBuyTokenModal(true)} 
-                      className={`w-full ${
-                        token.color === 'primary' ? 'bg-cyan-500 hover:bg-cyan-600' : 
-                        token.color === 'secondary' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-green-500 hover:bg-green-600'
-                      } text-white px-4 py-2 rounded-lg text-base font-medium transition`}
-                    >
-                      {token.button.text}
-                    </Button>
-                  ) : (
-                    <Link 
-                      href={token.button.action === 'exploreAssets' ? '/marketplace' : '/staking'}
-                      className={`block text-center w-full ${
-                        token.color === 'primary' ? 'bg-cyan-500 hover:bg-cyan-600' : 
-                        token.color === 'secondary' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-green-500 hover:bg-green-600'
-                      } text-white px-4 py-2 rounded-lg text-base font-medium transition`}
-                    >
-                      {token.button.text}
-                    </Link>
-                  )}
+                  <Link 
+                    href={token.button.action === 'exploreAssets' ? '/marketplace' : '/staking'}
+                    className={`block text-center w-full glow-button ${
+                      token.color === 'primary' ? 'bg-cyan-500 hover:bg-cyan-600' : 
+                      token.color === 'secondary' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-green-500 hover:bg-green-600'
+                    } text-white px-4 py-2 rounded-lg text-base font-medium transition`}
+                  >
+                    {token.button.text}
+                  </Link>
                 </div>
               </div>
             ))}
@@ -130,8 +114,7 @@ const Home = () => {
         </div>
       </div>
 
-      {/* Buy Token Modal */}
-      <BuyTokenModal open={buyTokenModal} onOpenChange={setBuyTokenModal} />
+      
     </>
   );
 };

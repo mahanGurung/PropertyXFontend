@@ -2,6 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animated Sparkle Effect */
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.sparkle-button {
+  position: relative;
+  overflow: hidden;
+}
+
+.sparkle-button::before {
+  content: '✨';
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  animation: sparkle 2s infinite;
+  animation-delay: 0s;
+  pointer-events: none;
+}
+
+.sparkle-button::after {
+  content: '⭐';
+  position: absolute;
+  top: 70%;
+  right: 20%;
+  animation: sparkle 2s infinite;
+  animation-delay: 1s;
+  pointer-events: none;
+}
+
+/* Glow Effect */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(34, 211, 238, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.6), 0 0 30px rgba(34, 211, 238, 0.4); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(139, 92, 246, 0.3); }
+  50% { box-shadow: 0 0 25px rgba(139, 92, 246, 0.6), 0 0 35px rgba(139, 92, 246, 0.4); }
+}
+
+.glow-button {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.glow-effect {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Floating Animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Background Animated Particles */
+@keyframes particle-float {
+  0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+.particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle:nth-child(1) { left: 10%; animation: particle-float 15s infinite linear; animation-delay: 0s; }
+.particle:nth-child(2) { left: 20%; animation: particle-float 18s infinite linear; animation-delay: 2s; }
+.particle:nth-child(3) { left: 30%; animation: particle-float 12s infinite linear; animation-delay: 4s; }
+.particle:nth-child(4) { left: 40%; animation: particle-float 16s infinite linear; animation-delay: 6s; }
+.particle:nth-child(5) { left: 50%; animation: particle-float 14s infinite linear; animation-delay: 8s; }
+.particle:nth-child(6) { left: 60%; animation: particle-float 20s infinite linear; animation-delay: 10s; }
+.particle:nth-child(7) { left: 70%; animation: particle-float 13s infinite linear; animation-delay: 12s; }
+.particle:nth-child(8) { left: 80%; animation: particle-float 17s infinite linear; animation-delay: 14s; }
+.particle:nth-child(9) { left: 90%; animation: particle-float 19s infinite linear; animation-delay: 16s; }
+
+/* Shimmer Effect */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
