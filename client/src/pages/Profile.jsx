@@ -8,6 +8,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { shortenAddress } from '../lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
+import { Cl, fetchCallReadOnlyFunction } from '@stacks/transactions';
+import { request } from '@stacks/connect';
+
 
 const Profile = () => {
   const { connected, stxAddress, balance, callContract } = useWallet();
@@ -34,7 +37,7 @@ const Profile = () => {
   const [mockBalance, setMockBalance] = useState(0);
 
   const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
-  const CONTRACT_NAME = 'test3-rws';
+  const CONTRACT_NAME = 'test5-rws';
 
   useEffect(() => {
   if (connected && stxAddress) {
@@ -50,19 +53,30 @@ const Profile = () => {
       const checkAdminStatus = async () => {
         try {
           // Call the get-admin function in the contract to determine if user is admin
-          const result = await callContract({
-            contractAddress: CONTRACT_ADDRESS,
-            contractName: CONTRACT_NAME,
+          const options = {
+            contractAddress: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E',
+            contractName: 'test5-rws',
             functionName: 'get-admin',
-            functionArgs: []
-          });
+            functionArgs: [],
+            network: 'testnet',
+            senderAddress: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E',
+          };
+
+          const result = await fetchCallReadOnlyFunction(options);
+
+          console.log("get admin: ", result.type);
+
+
+          console.log("get admin: ", result.value.value);
+          console.log('stx Address: ', stxAddress);
 
           // Parse the result to determine if current user is admin
-          if (result && result.value && result.value.type === 'ok') {
-            const adminAddress = result.value.value.address;
-            const userIsAdmin = adminAddress === stxAddress;
-            setIsAdmin(userIsAdmin);
-            console.log(`Admin check complete. User ${userIsAdmin ? 'is' : 'is not'} admin.`);
+          if (result && result.value.value && result.type === 'ok') {
+            const adminAddress = result.value.value;
+            if (adminAddress == stxAddress){
+            setIsAdmin(true);
+            console.log(`Admin check complete. User ${true ? 'is' : 'is not'} admin.`);
+            }
           } else {
             console.log('Could not determine admin status from contract');
             setIsAdmin(false);
@@ -214,31 +228,50 @@ const Profile = () => {
     setActiveTab(value);
   };
 
- const { connected, stxAddress } = useWallet();
-  const [pxtBalance, setPxtBalance] = useState(0);
+ 
+  // const [pxtBalance, setPxtBalance] = useState(0);
 
-  const fetchPxtBalance = async () => {
-    if (!connected || !stxAddress) return;
+  // const fetchPxtBalance = async () => {
+  //   if (!connected || !stxAddress) return;
 
-    try {
+  //   try {
+  //     const response = await request('stx_callContract', {
+  //       contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
+  //       functionName: 'get-balance',
+  //       functionArgs: [createPrincipalCV(stxAddress)],
+  //       network: 'testnet'
+  //     });
+
+  //     if (response) {
+  //       setPxtBalance(response.value);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching PXT balance:', error);
+  //   }
+  // };
+
+  // const handlePurchase = async () => {
+
+  //   startPxtPurchase();
+    
+  // }
+
+  const startPxtPurchase = async () => {
+    if (connected){
       const response = await request('stx_callContract', {
         contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
-        functionName: 'get-balance',
-        functionArgs: [createPrincipalCV(stxAddress)],
+        functionName: 'stop-pxt-sale',
+        functionArgs: [
+                        Cl.bool(false)
+                      ],
         network: 'testnet'
-      });
-
-      if (response) {
-        setPxtBalance(response.value);
-      }
-    } catch (error) {
-      console.error('Error fetching PXT balance:', error);
+      })
     }
-  };
+  }
 
-  useEffect(() => {
-    fetchPxtBalance();
-  }, [connected, stxAddress]);
+  // useEffect(() => {
+  //   fetchPxtBalance();
+  // }, [connected, stxAddress]);
 
  return (
     <div className="min-h-screen  mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
@@ -258,15 +291,16 @@ const Profile = () => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full sm:w-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full sm:w-auto">
             <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
               <p className="text-xs text-gray-400 mb-1">PXT Balance</p>
-              <p className="font-semibold text-cyan-400">{mockBalance.toFixed(2)}PXT</p>
+              <p className="font-semibold text-cyan-400">{balance.pxt}PXT</p>
             </div>
-            <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
+            
+            {/* <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
               <p className="text-xs text-gray-400 mb-1">BTC Rewards</p>
               <p className="font-semibold text-yellow-400">{(balance?.btc || 0).toFixed(8)}</p>
-            </div>
+            </div> */}
             <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
               <p className="text-xs text-gray-400 mb-1">KYC Status</p>
               <div className="flex items-center justify-center">
@@ -303,12 +337,20 @@ const Profile = () => {
             </Button>
           )}
           {connected && isAdmin && (
+          <>
             <Button 
               className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white ml-4"
               onClick={() => setShowAdminKycModal(true)}
             >
               <i className="fas fa-user-shield mr-2"></i> Admin: Approve KYC
             </Button>
+            <Button 
+              className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white ml-4"
+              onClick={startPxtPurchase}
+            >
+              <i className="fas fa-user-shield mr-2"></i> Start sale of pxt
+            </Button>
+          </>
           )}
         </div>
       </div>

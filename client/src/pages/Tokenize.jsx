@@ -46,11 +46,11 @@ const Tokenize = () => {
             if (connected) {
               
               const response = await request('stx_callContract', {
-                contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.rws1',
+                contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
                 functionName: 'add-for-tokenization',
                 functionArgs: [
                                 
-                                Cl.uint(4),
+                                Cl.uint(1),
                                 Cl.stringUtf8(formData.assetName),
                                 Cl.uint(formData.assetValue),
                                 Cl.stringUtf8("haoje")

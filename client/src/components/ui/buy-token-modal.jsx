@@ -4,9 +4,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useWallet } from '../../contexts/WalletContext';
+import { request } from '@stacks/connect';
+import { Cl } from '@stacks/transactions'
 
 const BuyTokenModal = ({ open, onOpenChange }) => {
-  const { connected , stxAddress} = useWallet();
+  const { connected , stxAddress, } = useWallet();
   const [amount, setAmount] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('stx');
 
@@ -60,8 +62,9 @@ const handlePurchase = async () => {
     const response = await request('stx_callContract', {
       contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
       functionName: 'buy-Pxt',
-      functionArgs: [createUintCV(amount)],
-      network: 'testnet'
+      functionArgs: [Cl.uint(amount)],
+      network: 'testnet',
+      postConditionMode: 'allow'
     });
 
     if (response) {

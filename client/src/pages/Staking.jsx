@@ -8,6 +8,8 @@ import { useWallet } from '../contexts/WalletContext';
 import { useToast } from '@/hooks/use-toast';
 import { shortenAddress } from '../lib/utils';
 import assets from '../data/asset-data';
+import { request } from '@stacks/connect';
+import { Cl } from '@stacks/transactions';
 
 const Staking = () => {
   const { connected, stxAddress, callContract } = useWallet();
@@ -25,7 +27,7 @@ const Staking = () => {
   const [userVote, setUserVote] = useState(null);
 
   const CONTRACT_ADDRESS = 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E';
-  const CONTRACT_NAME = 'rws';
+  const CONTRACT_NAME = 'test5-rws';
 
   // Function to stake PXT tokens
   const stakePxt = async () => {
@@ -49,14 +51,16 @@ const Staking = () => {
         return;
       }
 
-      const result = await callContract({
-        contractAddress: CONTRACT_ADDRESS,
-        contractName: CONTRACT_NAME,
+      const result = await request('stx_callContract' ,{
+        contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
         functionName: 'stake-pxt',
-        functionArgs: [amount]
+        functionArgs: [Cl.uint(amount)],
+        network: 'testnet',
+        postConditionMode: 'allow'
       });
+      console.log(result)
 
-      if (result && result.value) {
+      if (result) {
         toast({
           title: "Staking Successful",
           description: `Successfully staked ${pxtStakeAmount} PXT tokens.`,

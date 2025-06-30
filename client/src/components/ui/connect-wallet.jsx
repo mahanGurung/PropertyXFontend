@@ -5,18 +5,18 @@ import { shortenAddress } from '../../lib/utils';
 import { GiHamburgerMenu } from "react-icons/gi";
 
 const ConnectWallet = ({ mobile = false, onClick = () => {} }) => {
-  const { connected, stxAddress, connect, disconnect } = useWallet();
+  const { connected, stxAddress, getConnect, getDisconnect } = useWallet();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [location, setLocation] = useLocation();
 
   const handleConnect = () => {
-    connect();
+    getConnect();
     onClick();
   };
 
   const handleDisconnect = () => {
-    disconnect();
+    getDisconnect();
     setLocation('/');
     onClick();
   };
