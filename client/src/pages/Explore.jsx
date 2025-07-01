@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'wouter';
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -48,142 +49,144 @@ const Explore = () => {
   });
 
   return (
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-3xl font-heading font-bold text-secondary">Explore Tokenized Assets</h1>
-        <p className="mt-4 text-lg text-neutral-300 max-w-3xl mx-auto">
-          Discover real-world assets tokenized on the PropertyX Protocol. Browse, analyze, and invest in diverse urban properties.
-        </p>
-      </div>
-      
-      {/* Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label htmlFor="type-filter" className="block text-sm font-medium text-neutral-400 mb-1">Asset Type</label>
-            <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Types" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all_types">All Types</SelectItem>
-                {assetTypes.map((type) => (
-                  <SelectItem key={type} value={type}>{type}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label htmlFor="location-filter" className="block text-sm font-medium text-neutral-400 mb-1">Location</label>
-            <Select value={filters.location} onValueChange={(value) => handleFilterChange('location', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="All Locations" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all_locations">All Locations</SelectItem>
-                {locations.map((location) => (
-                  <SelectItem key={location} value={location}>{location}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label htmlFor="sort-by" className="block text-sm font-medium text-neutral-400 mb-1">Sort By</label>
-            <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange('sortBy', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="highestValuation">Highest Valuation</SelectItem>
-                <SelectItem value="highestAPR">Highest APR</SelectItem>
-                <SelectItem value="alphabetical">Alphabetical</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+    <div className="bg-gradient-to-b from-gray-900/80 via-gray-900/50 to-gray-900/30 min-h-screen">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-300 to-purple-400 bg-clip-text text-transparent">Explore Tokenized Assets</h1>
+          <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
+            Discover real-world assets tokenized on the PropertyX Protocol. Browse, analyze, and invest in diverse urban properties.
+          </p>
         </div>
-      </div>
-      
-      {/* Asset Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {sortedAssets.map((asset) => (
-          <div key={asset.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="relative h-48 overflow-hidden">
-              <img src={asset.image} alt={asset.name} className="w-full h-full object-cover" />
-              <div className="absolute top-2 right-2">
-                <span className="bg-secondary text-white text-xs px-2 py-1 rounded-full">{asset.type}</span>
-              </div>
+        
+        {/* Filters */}
+        <div className="bg-gradient-to-b from-gray-800/50 to-gray-800/80 p-4 rounded-lg shadow-lg mb-8 border border-gray-700/30">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label htmlFor="type-filter" className="block text-sm font-medium text-gray-400 mb-1">Asset Type</label>
+              <Select value={filters.type} onValueChange={(value) => handleFilterChange('type', value)}>
+                <SelectTrigger className="bg-gray-700/50 border-gray-600/50 text-gray-100 focus:ring-teal-500 focus:border-teal-500">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
+                  <SelectItem value="all_types">All Types</SelectItem>
+                  {assetTypes.map((type) => (
+                    <SelectItem key={type} value={type}>{type}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="p-5">
-              <h3 className="text-xl font-heading font-semibold text-secondary mb-1">{asset.name}</h3>
-              <div className="flex items-center mb-3">
-                <span className="text-sm font-medium text-primary bg-primary-50 px-2 py-0.5 rounded-full">{asset.symbol}-APT</span>
-                <span className="ml-2 text-sm text-neutral-300">{asset.location}</span>
-              </div>
-              <p className="text-neutral-300 text-sm mb-4 line-clamp-2">{asset.description}</p>
-              
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-xs text-neutral-300">Valuation</p>
-                  <p className="font-semibold text-secondary">{asset.valuation}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-300">Token Price</p>
-                  <p className="font-semibold text-secondary">{asset.tokenPrice}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-300">APT Supply</p>
-                  <p className="font-semibold text-secondary">{asset.tokens.split(' ')[0]}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-neutral-300">APR</p>
-                  <p className="font-semibold text-accent">{asset.apr}</p>
-                </div>
-              </div>
-              
-              <div className="flex space-x-2">
-                <Button
-                  onClick={() => handleAssetClick(asset)}
-                  variant="secondary"
-                  className="flex-1 bg-secondary hover:bg-secondary-600 text-white text-sm py-2 px-3 rounded-lg transition"
-                >
-                  View Details
-                </Button>
-                <Button
-                  className="flex-1 bg-primary hover:bg-primary-600 text-white text-sm py-2 px-3 rounded-lg transition"
-                >
-                  Buy Tokens
-                </Button>
-              </div>
+            <div>
+              <label htmlFor="location-filter" className="block text-sm font-medium text-gray-400 mb-1">Location</label>
+              <Select value={filters.location} onValueChange={(value) => handleFilterChange('location', value)}>
+                <SelectTrigger className="bg-gray-700/50 border-gray-600/50 text-gray-100 focus:ring-teal-500 focus:border-teal-500">
+                  <SelectValue placeholder="All Locations" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
+                  <SelectItem value="all_locations">All Locations</SelectItem>
+                  {locations.map((location) => (
+                    <SelectItem key={location} value={location}>{location}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label htmlFor="sort-by" className="block text-sm font-medium text-gray-400 mb-1">Sort By</label>
+              <Select value={filters.sortBy} onValueChange={(value) => handleFilterChange('sortBy', value)}>
+                <SelectTrigger className="bg-gray-700/50 border-gray-600/50 text-gray-100 focus:ring-teal-500 focus:border-teal-500">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="highestValuation">Highest Valuation</SelectItem>
+                  <SelectItem value="highestAPR">Highest APR</SelectItem>
+                  <SelectItem value="alphabetical">Alphabetical</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Empty state if no assets match filters */}
-      {sortedAssets.length === 0 && (
-        <div className="text-center py-16">
-          <div className="w-16 h-16 mx-auto bg-neutral-50 rounded-full flex items-center justify-center mb-4">
-            <i className="fas fa-search text-xl text-neutral-300"></i>
-          </div>
-          <h3 className="text-lg font-heading font-medium text-secondary mb-2">No Assets Found</h3>
-          <p className="text-neutral-300 mb-6">Try adjusting your filters to find more assets.</p>
-          <Button 
-            onClick={() => setFilters({ type: 'all_types', location: 'all_locations', sortBy: 'newest' })}
-            variant="outline"
-            className="bg-white border-neutral-200 text-neutral-400 hover:bg-neutral-50"
-          >
-            Clear Filters
-          </Button>
         </div>
-      )}
+        
+        {/* Asset Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {sortedAssets.map((asset) => (
+            <div key={asset.id} className="bg-gradient-to-b from-gray-800/50 to-gray-800/80 rounded-lg shadow-lg overflow-hidden border border-gray-700/30 hover:border-teal-400/50 transition-all duration-300 hover:shadow-teal-500/20">
+              <div className="relative h-48 overflow-hidden">
+                <img src={asset.image} alt={asset.name} className="w-full h-full object-cover" />
+                <div className="absolute top-2 right-2">
+                  <span className="bg-gradient-to-r from-teal-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full">{asset.type}</span>
+                </div>
+              </div>
+              <div className="p-5">
+                <h3 className="text-xl font-semibold text-gray-100 mb-1">{asset.name}</h3>
+                <div className="flex items-center mb-3">
+                  <span className="text-sm font-medium text-teal-300 bg-teal-500/20 px-2 py-0.5 rounded-full">{asset.symbol}-APT</span>
+                  <span className="ml-2 text-sm text-gray-300">{asset.location}</span>
+                </div>
+                <p className="text-gray-300 text-sm mb-4 line-clamp-2">{asset.description}</p>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <p className="text-xs text-gray-400">Valuation</p>
+                    <p className="font-semibold text-gray-100">{asset.valuation}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">Token Price</p>
+                    <p className="font-semibold text-gray-100">{asset.tokenPrice}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">APT Supply</p>
+                    <p className="font-semibold text-gray-100">{asset.tokens.split(' ')[0]}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400">APR</p>
+                    <p className="font-semibold text-teal-400">{asset.apr}</p>
+                  </div>
+                </div>
+                
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={() => handleAssetClick(asset)}
+                    variant="outline"
+                    className="flex-1 border-gray-600/50 text-gray-300 hover:bg-gray-700/50 hover:border-teal-400/50 transition-all duration-300"
+                  >
+                    View Details
+                  </Button>
+                  <Button
+                    className="flex-1 bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white transition-all duration-300 hover:shadow-teal-500/30"
+                  >
+                    Buy Tokens
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
 
-      {/* Asset Detail Modal */}
-      <AssetDetailModal 
-        open={assetDetailModal} 
-        onOpenChange={setAssetDetailModal} 
-        asset={selectedAsset} 
-      />
+        {/* Empty state if no assets match filters */}
+        {sortedAssets.length === 0 && (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-4">
+              <i className="fas fa-search text-xl text-gray-400"></i>
+            </div>
+            <h3 className="text-lg font-medium text-gray-100 mb-2">No Assets Found</h3>
+            <p className="text-gray-300 mb-6">Try adjusting your filters to find more assets.</p>
+            <Button 
+              onClick={() => setFilters({ type: 'all_types', location: 'all_locations', sortBy: 'newest' })}
+              variant="outline"
+              className="border-gray-600/50 text-gray-300 hover:bg-gray-700/50"
+            >
+              Clear Filters
+            </Button>
+          </div>
+        )}
+
+        {/* Asset Detail Modal */}
+        <AssetDetailModal 
+          open={assetDetailModal} 
+          onOpenChange={setAssetDetailModal} 
+          asset={selectedAsset} 
+        />
+      </div>
     </div>
   );
 };
