@@ -24,11 +24,6 @@ const Home = () => {
                 >
                   <i className="fas fa-search mr-2"></i> Explore Assets
                 </Link>
-                <Link href="/tokenize"
-                  className="glow-button bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white px-6 py-3 rounded-lg text-base font-medium shadow-lg transition flex items-center justify-center"
-                >
-                  <i className="fas fa-plus mr-2"></i> Tokenize Asset
-                </Link>
               </div>
             </div>
             <div className="lg:col-span-6 xl:col-span-7 mt-12 lg:mt-0">
@@ -98,15 +93,16 @@ const Home = () => {
                   ))}
                 </ul>
                 <div className="mt-6">
+                  {token.button.action === "exploreAssets" &&
                   <Link 
-                    href={token.button.action === 'exploreAssets' ? '/marketplace' : '/staking'}
+                    href={ '/marketplace'}
                     className={`block text-center w-full glow-button ${
                       token.color === 'primary' ? 'bg-cyan-500 hover:bg-cyan-600' : 
                       token.color === 'secondary' ? 'bg-purple-500 hover:bg-purple-600' : 'bg-green-500 hover:bg-green-600'
                     } text-white px-4 py-2 rounded-lg text-base font-medium transition`}
                   >
                     {token.button.text}
-                  </Link>
+                  </Link>}
                 </div>
               </div>
             ))}

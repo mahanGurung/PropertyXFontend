@@ -64,10 +64,25 @@ export const tokenomicsData = [
       "Unique per asset (e.g., HORIZ-APT)",
       "Rights to 45% of asset's cash flows",
       "4.5% APY + 0.25-0.5% BTC yield",
+      "Sold to raise liquidity for asset owners.",
     ],
     button: {
       text: "Explore Assets",
       action: "exploreAssets",
+    },
+  },
+  {
+    name: "Stacking",
+    color: "accent",
+    description:
+      "Earn yields and governance power by staking APT or PXT tokens.",
+    features: [
+      "APT Staking: 4.5% APY + 0.25-0.5% BTC yield",
+      "PXT Staking: 2-4% protocol APY + 0.25-0.5% BTC yield",
+      "Governance voting: 1 PXT = 1 vote"    ],
+    button: {
+      text: "Start Staking",
+      action: "staking",
     },
   },
 ];
@@ -81,9 +96,6 @@ export const tokenizationSteps = [
   },
   {
     step: "You retain 40% of profits and ownership; 45% goes to APT holders; 10% to PXT; 5% to treasury.",
-  },
-  {
-    step: "10,000 PXFO NFTs represent fractional ownership for qualifying stakers.",
   },
   {
     step: "Monthly profit deposits ensure transparent distribution to all stakeholders.",
