@@ -7,7 +7,7 @@ const Home = () => {
   return (
     <>
       {/* Hero Section */}
-      <div className="relative bg-gray-900 overflow-hidden border-b border-gray-800">
+      <div className="relative bg-transparent overflow-hidden border-b border-gray-800/30">
         <div className="  container  mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
           <div className="lg:grid lg:grid-cols-12 lg:gap-8">
             <div className="lg:col-span-6 xl:col-span-5">
@@ -38,7 +38,7 @@ const Home = () => {
       </div>
 
       {/* Benefits Section */}
-      <div className="bg-gray-900  mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div className="bg-transparent mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-100">How PropertyX Benefits You</h2>
           <p className="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">
@@ -62,7 +62,7 @@ const Home = () => {
       </div>
       
       {/* Tokenomics Section */}
-      <div className="bg-gray-900 border-t min-h-screen border-gray-800 py-16">
+      <div className="bg-transparent border-t min-h-screen border-gray-800/30 py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-100">Tokenomics</h2>
