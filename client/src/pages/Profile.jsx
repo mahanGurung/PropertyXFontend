@@ -11,7 +11,6 @@ import { Link } from 'wouter';
 import { Cl, fetchCallReadOnlyFunction } from '@stacks/transactions';
 import { request } from '@stacks/connect';
 
-
 const Profile = () => {
   const { connected, stxAddress, balance, callContract } = useWallet();
   const { toast } = useToast();
@@ -23,12 +22,12 @@ const Profile = () => {
   const CONTRACT_NAME = 'test5-rws';
 
   useEffect(() => {
-  if (connected && stxAddress) {
-    const storedData = JSON.parse(localStorage.getItem('pxtPurchases') || '{}');
-    const userBalance = parseFloat(storedData[stxAddress] || 0);
-    setMockBalance(userBalance);
-  }
-}, [connected, stxAddress]);
+    if (connected && stxAddress) {
+      const storedData = JSON.parse(localStorage.getItem('pxtPurchases') || '{}');
+      const userBalance = parseFloat(storedData[stxAddress] || 0);
+      setMockBalance(userBalance);
+    }
+  }, [connected, stxAddress]);
 
   // Check if user is admin using the contract's get-admin function
   useEffect(() => {
@@ -48,24 +47,20 @@ const Profile = () => {
           const result = await fetchCallReadOnlyFunction(options);
 
           console.log("get admin: ", result.type);
-
-
           console.log("get admin: ", result.value.value);
           console.log('stx Address: ', stxAddress);
 
           // Parse the result to determine if current user is admin
           if (result && result.value.value && result.type === 'ok') {
             const adminAddress = result.value.value;
-            if (adminAddress == stxAddress){
-            setIsAdmin(true);
-            console.log(`Admin check complete. User ${true ? 'is' : 'is not'} admin.`);
+            if (adminAddress == stxAddress) {
+              setIsAdmin(true);
+              console.log(`Admin check complete. User ${true ? 'is' : 'is not'} admin.`);
             }
           } else {
             console.log('Could not determine admin status from contract');
             setIsAdmin(false);
           }
-
-          
         } catch (error) {
           console.error("Error checking admin status:", error);
           setIsAdmin(false);
@@ -76,315 +71,266 @@ const Profile = () => {
     }
   }, [connected, stxAddress]);
 
-  
-
   const handleTabChange = (value) => {
     setActiveTab(value);
   };
 
- 
-  // const [pxtBalance, setPxtBalance] = useState(0);
-
-  // const fetchPxtBalance = async () => {
-  //   if (!connected || !stxAddress) return;
-
-  //   try {
-  //     const response = await request('stx_callContract', {
-  //       contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
-  //       functionName: 'get-balance',
-  //       functionArgs: [createPrincipalCV(stxAddress)],
-  //       network: 'testnet'
-  //     });
-
-  //     if (response) {
-  //       setPxtBalance(response.value);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching PXT balance:', error);
-  //   }
-  // };
-
-  // const handlePurchase = async () => {
-
-  //   startPxtPurchase();
-    
-  // }
-
   const startPxtPurchase = async () => {
-    if (connected){
+    if (connected) {
       const response = await request('stx_callContract', {
         contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws',
         functionName: 'stop-pxt-sale',
-        functionArgs: [
-                        Cl.bool(false)
-                      ],
+        functionArgs: [Cl.bool(false)],
         network: 'testnet'
       })
     }
   }
 
-  // useEffect(() => {
-  //   fetchPxtBalance();
-  // }, [connected, stxAddress]);
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-teal-900/20 relative overflow-hidden">
+      {/* Background elements */}
+      <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-purple-800 opacity-10 filter blur-3xl"></div>
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-teal-700 opacity-10 filter blur-3xl"></div>
 
- return (
-    <div className="min-h-screen  mx-auto px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
-      {/* Profile Header */}
-      <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8 border border-gray-700">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
-          <div className="flex items-center mb-4 sm:mb-0">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
-              <i className="fas fa-user"></i>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
+        {/* Profile Header */}
+        <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-6 mb-8 border border-gray-700/50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between">
+            <div className="flex items-center mb-4 sm:mb-0">
+              <div className="bg-gradient-to-r from-teal-500 to-purple-600 text-white w-14 h-14 rounded-full flex items-center justify-center text-xl font-bold shadow-lg">
+                <i className="fas fa-user"></i>
+              </div>
+              <div className="ml-4">
+                <h1 className="text-2xl font-heading font-bold bg-gradient-to-r from-teal-300 to-purple-400 bg-clip-text text-transparent">
+                  My Profile
+                </h1>
+                {connected ? (
+                  <p className="text-sm text-neutral-300 font-mono">{shortenAddress(stxAddress || '', 8)}</p>
+                ) : (
+                  <p className="text-sm text-neutral-300 font-mono">Wallet not connected</p>
+                )}
+              </div>
             </div>
-            <div className="ml-4">
-              <h1 className="text-xl font-bold text-gray-100">My Profile</h1>
-              {connected ? (
-                <p className="text-sm text-gray-400 font-mono">{shortenAddress(stxAddress || '', 8)}</p>
-              ) : (
-                <p className="text-sm text-gray-400 font-mono">Wallet not connected</p>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full sm:w-auto">
-            <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
-              <p className="text-xs text-gray-400 mb-1">PXT Balance</p>
-              <p className="font-semibold text-cyan-400">{balance.pxt}PXT</p>
-            </div>
-            
-            {/* <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
-              <p className="text-xs text-gray-400 mb-1">BTC Rewards</p>
-              <p className="font-semibold text-yellow-400">{(balance?.btc || 0).toFixed(8)}</p>
-            </div> */}
-            <div className="bg-gray-700 p-3 rounded-lg text-center border border-gray-600">
-              <p className="text-xs text-gray-400 mb-1">Assets Tokenized</p>
-              <p className="font-semibold text-cyan-400">0</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full sm:w-auto">
+              <div className="bg-gray-700/50 p-4 rounded-lg text-center border border-gray-600/50">
+                <p className="text-xs text-neutral-400 mb-1">PXT Balance</p>
+                <p className="font-semibold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent text-lg">
+                  {balance.pxt} PXT
+                </p>
+              </div>
+              <div className="bg-gray-700/50 p-4 rounded-lg text-center border border-gray-600/50">
+                <p className="text-xs text-neutral-400 mb-1">Assets Tokenized</p>
+                <p className="font-semibold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent text-lg">
+                  0
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        
+        {/* Tabs */}
+        <Tabs 
+          value={activeTab} 
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
+          <TabsList className="grid grid-cols-3 max-w-lg mx-auto mb-8 bg-gray-800/70 backdrop-blur-sm border border-gray-700/50 rounded-lg p-1">
+            <TabsTrigger 
+              value="assets" 
+              className={`py-3 px-4 ${activeTab === 'assets' ? 'bg-gradient-to-r from-teal-500 to-purple-600 text-white shadow-lg' : 'bg-transparent text-gray-400 hover:text-white'} rounded-md transition-all duration-300 font-medium`}
+            >
+              <i className="fas fa-building mr-2"></i> My Assets
+            </TabsTrigger>
+            <TabsTrigger 
+              value="profits" 
+              className={`py-3 px-4 ${activeTab === 'profits' ? 'bg-gradient-to-r from-teal-500 to-purple-600 text-white shadow-lg' : 'bg-transparent text-gray-400 hover:text-white'} rounded-md transition-all duration-300 font-medium`}
+            >
+              <i className="fas fa-chart-line mr-2"></i> Profit History
+            </TabsTrigger>
+            <TabsTrigger 
+              value="governance" 
+              className={`py-3 px-4 ${activeTab === 'governance' ? 'bg-gradient-to-r from-teal-500 to-purple-600 text-white shadow-lg' : 'bg-transparent text-gray-400 hover:text-white'} rounded-md transition-all duration-300 font-medium`}
+            >
+              <i className="fas fa-vote-yea mr-2"></i> Governance
+            </TabsTrigger>
+          </TabsList>
+
+          {/* My Assets Tab */}
+          <TabsContent value="assets">
+            {!connected ? (
+              <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-8 text-center border border-gray-700/50">
+                <div className="w-16 h-16 mx-auto bg-gray-700/50 text-teal-400 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                  <i className="fas fa-wallet text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-heading font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+                <p className="text-neutral-300 mb-6">Connect your Stacks wallet to view your tokenized assets and investments.</p>
+                <Button className="bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-teal-500/30">
+                  Connect Wallet
+                </Button>
+              </div>
+            ) : (
+              <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden border border-gray-700/50">
+                <div className="p-6 border-b border-gray-700/50">
+                  <h3 className="font-heading font-semibold text-gray-100 text-lg">Your Tokenized Assets</h3>
+                </div>
+
+                <div className="p-8 text-center border-b border-gray-700/50">
+                  <div className="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                    <i className="fas fa-building text-xl text-neutral-400"></i>
+                  </div>
+                  <h3 className="text-lg font-heading font-medium text-gray-100 mb-2">No Assets Found</h3>
+                  <p className="text-neutral-300 mb-6">You haven't tokenized any assets yet.</p>
+                  <Link href="/tokenize" className="inline-flex items-center bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-teal-500/30">
+                    <i className="fas fa-token mr-2"></i> Tokenize Asset
+                  </Link>
+                </div>
+
+                <div className="p-6 border-b border-gray-700/50">
+                  <h3 className="font-heading font-semibold text-gray-100 mb-4 text-lg">Your APT Investments</h3>
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-700/50">
+                      <thead className="bg-gray-700/50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Asset</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Token</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Amount</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Value</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">APR</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-neutral-400 uppercase tracking-wider">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-gray-800/50 divide-y divide-gray-700/50">
+                        <tr>
+                          <td className="px-6 py-4 text-center" colSpan="6">
+                            <p className="text-neutral-400">No APT investments found</p>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Profit History Tab */}
+          <TabsContent value="profits">
+            {!connected ? (
+              <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-8 text-center border border-gray-700/50">
+                <div className="w-16 h-16 mx-auto bg-gray-700/50 text-teal-400 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                  <i className="fas fa-wallet text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-heading font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+                <p className="text-neutral-300 mb-6">Connect your Stacks wallet to view your profit history.</p>
+                <Button className="bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-teal-500/30">
+                  Connect Wallet
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden border border-gray-700/50">
+                  <div className="p-6 border-b border-gray-700/50">
+                    <h3 className="font-heading font-semibold text-gray-100 text-lg">APT Profit Distribution</h3>
+                  </div>
+
+                  <div className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                      <i className="fas fa-chart-line text-xl text-neutral-400"></i>
+                    </div>
+                    <h3 className="text-lg font-heading font-medium text-gray-100 mb-2">No Profit History</h3>
+                    <p className="text-neutral-300">You haven't received any APT profits yet.</p>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden border border-gray-700/50">
+                  <div className="p-6 border-b border-gray-700/50">
+                    <h3 className="font-heading font-semibold text-gray-100 text-lg">BTC Rewards</h3>
+                  </div>
+
+                  <div className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                      <i className="fab fa-bitcoin text-xl text-neutral-400"></i>
+                    </div>
+                    <h3 className="text-lg font-heading font-medium text-gray-100 mb-2">No BTC Rewards</h3>
+                    <p className="text-neutral-300">You haven't received any BTC stacking rewards yet.</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Governance Tab */}
+          <TabsContent value="governance">
+            {!connected ? (
+              <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl p-8 text-center border border-gray-700/50">
+                <div className="w-16 h-16 mx-auto bg-gray-700/50 text-teal-400 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                  <i className="fas fa-wallet text-2xl"></i>
+                </div>
+                <h3 className="text-xl font-heading font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
+                <p className="text-neutral-300 mb-6">Connect your Stacks wallet to participate in governance.</p>
+                <Button className="bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-teal-500/30">
+                  Connect Wallet
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden border border-gray-700/50">
+                  <div className="p-6 border-b border-gray-700/50 flex items-center justify-between">
+                    <h3 className="font-heading font-semibold text-gray-100 text-lg">Active Proposals</h3>
+                    <Button className="bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white px-4 py-2 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-teal-500/30">
+                      <i className="fas fa-plus mr-2"></i> Create Proposal
+                    </Button>
+                  </div>
+
+                  <div className="p-8 text-center">
+                    <div className="w-16 h-16 mx-auto bg-gray-700/50 rounded-full flex items-center justify-center mb-4 border border-gray-600">
+                      <i className="fas fa-vote-yea text-xl text-neutral-400"></i>
+                    </div>
+                    <h3 className="text-lg font-heading font-medium text-gray-100 mb-2">No Active Proposals</h3>
+                    <p className="text-neutral-300 mb-6">There are no active governance proposals at this time.</p>
+                  </div>
+                </div>
+
+                <div className="bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-xl overflow-hidden border border-gray-700/50">
+                  <div className="p-6 border-b border-gray-700/50">
+                    <h3 className="font-heading font-semibold text-gray-100 text-lg">Your Voting Power</h3>
+                  </div>
+
+                  <div className="p-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-gray-700/50 p-4 rounded-lg border border-gray-600/50">
+                        <p className="text-sm text-neutral-400 mb-1">PXT Staked</p>
+                        <p className="text-2xl font-semibold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent">0 PXT</p>
+                      </div>
+                      <div className="bg-gray-700/50 p-4 rounded-lg border border-gray-600/50">
+                        <p className="text-sm text-neutral-400 mb-1">Voting Power</p>
+                        <p className="text-2xl font-semibold bg-gradient-to-r from-teal-400 to-purple-500 bg-clip-text text-transparent">0 votes</p>
+                      </div>
+                      <div className="bg-gray-700/50 p-4 rounded-lg border border-gray-600/50">
+                        <p className="text-sm text-neutral-400 mb-1">Voting History</p>
+                        <p className="text-2xl font-semibold text-neutral-300">0 votes cast</p>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-xs text-neutral-400">Governance Threshold</span>
+                        <span className="text-xs font-medium text-gray-300">0 / 100,000 PXT</span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-3">
+                        <div className="bg-gradient-to-r from-teal-400 to-purple-500 h-3 rounded-full" style={{ width: '0%' }}></div>
+                      </div>
+                      <p className="mt-2 text-xs text-neutral-400">
+                        Stake at least 100,000 PXT to create governance proposals and participate in voting.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
-
-      {/* Tabs */}
-      <Tabs 
-        value={activeTab} 
-        onValueChange={handleTabChange}
-        className="w-full"
-      >
-        <TabsList className="border-b border-gray-700 mb-6 grid grid-cols-3 max-w-md">
-          <TabsTrigger 
-            value="assets" 
-            className={`py-4 px-1 relative font-medium text-sm ${
-              activeTab === 'assets' ? 
-                'text-cyan-400 border-b-2 border-cyan-400' : 
-                'text-gray-400 hover:text-cyan-300'
-            }`}
-          >
-            <i className="fas fa-building mr-2"></i> My Assets
-          </TabsTrigger>
-          <TabsTrigger 
-            value="profits" 
-            className={`py-4 px-1 relative font-medium text-sm ${
-              activeTab === 'profits' ? 
-                'text-cyan-400 border-b-2 border-cyan-400' : 
-                'text-gray-400 hover:text-cyan-300'
-            }`}
-          >
-            <i className="fas fa-chart-line mr-2"></i> Profit History
-          </TabsTrigger>
-          <TabsTrigger 
-            value="governance" 
-            className={`py-4 px-1 relative font-medium text-sm ${
-              activeTab === 'governance' ? 
-                'text-cyan-400 border-b-2 border-cyan-400' : 
-                'text-gray-400 hover:text-cyan-300'
-            }`}
-          >
-            <i className="fas fa-vote-yea mr-2"></i> Governance
-          </TabsTrigger>
-        </TabsList>
-
-        {/* My Assets Tab */}
-        <TabsContent value="assets">
-          {!connected ? (
-            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
-              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
-                <i className="fas fa-wallet text-2xl"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
-              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your tokenized assets and investments.</p>
-              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
-                Connect Wallet
-              </Button>
-            </div>
-          ) : (
-            <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
-              <div className="p-6 border-b border-gray-700">
-                <h3 className="font-semibold text-gray-100">Your Tokenized Assets</h3>
-              </div>
-
-              <div className="p-8 text-center border-b border-gray-700">
-                <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                  <i className="fas fa-building text-xl text-gray-400"></i>
-                </div>
-                <h3 className="text-lg font-medium text-gray-100 mb-2">No Assets Found</h3>
-                <p className="text-gray-400 mb-6">You haven't tokenized any assets yet.</p>
-                  <Link href="/tokenize" className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
-                  <i className="fas fa-token mr-2"></i> Tokenize Asset
-                </Link>
-              </div>
-
-              <div className="p-6 border-b border-gray-700">
-                <h3 className="font-semibold text-gray-100 mb-4">Your APT Investments</h3>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full divide-y divide-gray-700">
-                    <thead className="bg-gray-700">
-                      <tr>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Asset</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Token</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Value</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">APR</th>
-                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="bg-gray-800 divide-y divide-gray-700">
-                      <tr>
-                        <td className="px-6 py-4 text-center" colSpan="6">
-                          <p className="text-gray-400">No APT investments found</p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Profit History Tab */}
-        <TabsContent value="profits">
-          {!connected ? (
-            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
-              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
-                <i className="fas fa-wallet text-2xl"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
-              <p className="text-gray-400 mb-6">Connect your Stacks wallet to view your profit history.</p>
-              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
-                Connect Wallet
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
-                <div className="p-6 border-b border-gray-700">
-                  <h3 className="font-semibold text-gray-100">APT Profit Distribution</h3>
-                </div>
-
-                <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-chart-line text-xl text-gray-400"></i>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Profit History</h3>
-                  <p className="text-gray-400">You haven't received any APT profits yet.</p>
-                </div>
-              </div>
-
-              
-
-              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
-                <div className="p-6 border-b border-gray-700">
-                  <h3 className="font-semibold text-gray-100">BTC Rewards</h3>
-                </div>
-
-                <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                    <i className="fab fa-bitcoin text-xl text-gray-400"></i>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-100 mb-2">No BTC Rewards</h3>
-                  <p className="text-gray-400">You haven't received any BTC stacking rewards yet.</p>
-                </div>
-              </div>
-            </div>
-          )}
-        </TabsContent>
-
-        {/* Governance Tab */}
-        <TabsContent value="governance">
-          {!connected ? (
-            <div className="bg-gray-800 rounded-lg shadow-md p-8 text-center border border-gray-700">
-              <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
-                <i className="fas fa-wallet text-2xl"></i>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-100 mb-2">Connect Your Wallet</h3>
-              <p className="text-gray-400 mb-6">Connect your Stacks wallet to participate in governance.</p>
-              <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
-                Connect Wallet
-              </Button>
-            </div>
-          ) : (
-            <div className="space-y-8">
-              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
-                <div className="p-6 border-b border-gray-700 flex items-center justify-between">
-                  <h3 className="font-semibold text-gray-100">Active Proposals</h3>
-                  <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition">
-                    <i className="fas fa-plus mr-2"></i> Create Proposal
-                  </Button>
-                </div>
-
-                <div className="p-8 text-center">
-                  <div className="w-16 h-16 mx-auto bg-gray-700 rounded-full flex items-center justify-center mb-4">
-                    <i className="fas fa-vote-yea text-xl text-gray-400"></i>
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-100 mb-2">No Active Proposals</h3>
-                  <p className="text-gray-400 mb-6">There are no active governance proposals at this time.</p>
-                </div>
-              </div>
-
-              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700">
-                <div className="p-6 border-b border-gray-700">
-                  <h3 className="font-semibold text-gray-100">Your Voting Power</h3>
-                </div>
-
-                <div className="p-6">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div>
-                      <p className="text-sm text-gray-400 mb-1">PXT Staked</p>
-                      <p className="text-2xl font-semibold text-cyan-400">0 PXT</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400 mb-1">Voting Power</p>
-                      <p className="text-2xl font-semibold text-cyan-400">0 votes</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400 mb-1">Voting History</p>
-                      <p className="text-2xl font-semibold text-gray-400">0 votes cast</p>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <div className="flex justify-between mb-1">
-                      <span className="text-xs text-gray-400">Governance Threshold</span>
-                      <span className="text-xs font-medium text-gray-300">0 / 100,000 PXT</span>
-                    </div>
-                    <div className="w-full bg-gray-700 rounded-full h-2">
-                      <div className="bg-cyan-400 h-2 rounded-full" style={{ width: '0%' }}></div>
-                    </div>
-                    <p className="mt-2 text-xs text-gray-400">
-                      Stake at least 100,000 PXT to create governance proposals and participate in voting.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
-
-      
     </div>
   );
 };
