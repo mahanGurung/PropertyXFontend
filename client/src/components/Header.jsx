@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useWallet } from '../contexts/WalletContext';
-import ConnectWallet from './ui/connect-wallet';
+import { shortenAddress } from '../lib/utils';
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
-  const { connected } = useWallet();
+  const [location, setLocation] = useLocation();
+  const { connected, stxAddress, getConnect, getDisconnect } = useWallet();
 
   const navigationItems = [
     { name: 'Home', path: '/' },
@@ -17,6 +17,15 @@ const Header = () => {
   const isActive = (path) => location === path;
 
   const closeMenu = () => setMobileMenuOpen(false);
+
+  const handleConnect = () => {
+    getConnect();
+  };
+
+  const handleDisconnect = () => {
+    getDisconnect();
+    setLocation('/');
+  };
 
   return (
     <header className="bg-gray-900/95 backdrop-blur-sm border-b border-gray-700 shadow-xl sticky top-0 z-50">
@@ -36,20 +45,51 @@ const Header = () => {
               <Link
                 key={item.name}
                 href={item.path}
-                className={`px-4 py-2 text-sm lg:text-base font-medium rounded-lg transition-all duration-200 ${
+                className={`px-4 py-2 text-sm lg:text-base font-medium rounded-lg transition-all duration-300 ${
                   isActive(item.path)
-                    ? 'text-cyan-400 bg-gray-800/50 shadow-inner'
-                    : 'text-gray-300 hover:text-cyan-300 hover:bg-gray-800/30'
+                    ? 'text-cyan-400 bg-gray-800/50 shadow-inner shadow-cyan-400/20'
+                    : 'text-gray-300 hover:text-cyan-300 hover:bg-gray-800/30 hover:shadow-lg hover:shadow-cyan-400/20'
                 }`}
               >
                 {item.name}
               </Link>
             ))}
+            {connected && (
+              <Link
+                href="/profile"
+                className={`px-4 py-2 text-sm lg:text-base font-medium rounded-lg transition-all duration-300 ${
+                  isActive('/profile')
+                    ? 'text-cyan-400 bg-gray-800/50 shadow-inner shadow-cyan-400/20'
+                    : 'text-gray-300 hover:text-cyan-300 hover:bg-gray-800/30 hover:shadow-lg hover:shadow-cyan-400/20'
+                }`}
+              >
+                Profile
+              </Link>
+            )}
           </nav>
 
-          {/* Wallet Button */}
+          {/* Wallet Controls */}
           <div className="hidden md:flex items-center space-x-4">
-            <ConnectWallet />
+            {!connected ? (
+              <button
+                onClick={handleConnect}
+                className="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+              >
+                Connect Wallet
+              </button>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <div className="px-3 py-1 bg-gray-800 border border-gray-700 rounded-lg font-mono text-sm text-cyan-400">
+                  {shortenAddress(stxAddress || '', 10)}
+                </div>
+                <button
+                  onClick={handleDisconnect}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
+                >
+                  Disconnect
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -75,18 +115,57 @@ const Header = () => {
                 key={item.name}
                 href={item.path}
                 onClick={closeMenu}
-                className={`block px-4 py-3 rounded-md text-base font-medium transition-colors duration-200 ${
+                className={`block px-4 py-3 rounded-md text-base font-medium transition-all duration-300 ${
                   isActive(item.path)
-                    ? 'bg-gray-800/70 text-cyan-400'
-                    : 'text-gray-300 hover:bg-gray-800/50 hover:text-cyan-400'
+                    ? 'bg-gray-800/70 text-cyan-400 shadow-lg shadow-cyan-400/20'
+                    : 'text-gray-300 hover:bg-gray-800/50 hover:text-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20'
                 }`}
               >
                 {item.name}
               </Link>
             ))}
+            
+            {connected && (
+              <Link
+                href="/profile"
+                onClick={closeMenu}
+                className={`block px-4 py-3 rounded-md text-base font-medium transition-all duration-300 ${
+                  isActive('/profile')
+                    ? 'bg-gray-800/70 text-cyan-400 shadow-lg shadow-cyan-400/20'
+                    : 'text-gray-300 hover:bg-gray-800/50 hover:text-cyan-400 hover:shadow-lg hover:shadow-cyan-400/20'
+                }`}
+              >
+                Profile
+              </Link>
+            )}
 
             <div className="mt-4 border-t border-gray-700 pt-4">
-              <ConnectWallet mobile onClick={closeMenu} />
+              {!connected ? (
+                <button
+                  onClick={() => {
+                    handleConnect();
+                    closeMenu();
+                  }}
+                  className="w-full bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+                >
+                  Connect Wallet
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <div className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg font-mono text-sm text-cyan-400 text-center">
+                    {shortenAddress(stxAddress || '', 10)}
+                  </div>
+                  <button
+                    onClick={() => {
+                      handleDisconnect();
+                      closeMenu();
+                    }}
+                    className="w-full bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
+                  >
+                    Disconnect
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
