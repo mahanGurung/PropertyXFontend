@@ -218,10 +218,10 @@ const Staking = () => {
   };
 
   return (
-    <div className=" mx-auto min-h-screen px-4 sm:px-6 lg:px-8 py-8 bg-gray-900">
+    <div className="mx-auto min-h-screen px-4 sm:px-6 lg:px-8 py-8 bg-gradient-to-b from-gray-900 to-gray-800">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-100">Stake & Vote</h1>
-        <p className="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-teal-300 to-purple-400 bg-clip-text text-transparent">Stake & Vote</h1>
+        <p className="mt-4 text-lg text-gray-300 max-w-3xl mx-auto">
           Stake tokens to earn rewards and participate in governance by voting on tokenization proposals.
         </p>
       </div>
@@ -232,16 +232,16 @@ const Staking = () => {
           onValueChange={setActiveTab}
           className="w-full mb-8"
         >
-          <TabsList className="grid grid-cols-2 max-w-md mx-auto bg-gray-800 border border-gray-700 rounded-lg p-1">
+          <TabsList className="grid grid-cols-2 max-w-md mx-auto bg-gray-800/80 border border-gray-700/50 rounded-lg p-1">
             <TabsTrigger 
               value="staking" 
-              className={`py-2 px-4 ${activeTab === 'staking' ? 'bg-cyan-500 text-white' : 'bg-transparent text-gray-400'} rounded-md transition`}
+              className={`py-2 px-4 ${activeTab === 'staking' ? 'bg-gradient-to-r from-teal-500 to-teal-600 text-white' : 'bg-transparent text-gray-400 hover:text-gray-300'} rounded-md transition-all duration-300`}
             >
               <i className="fas fa-coins mr-2"></i> Staking
             </TabsTrigger>
             <TabsTrigger 
               value="governance" 
-              className={`py-2 px-4 ${activeTab === 'governance' ? 'bg-cyan-500 text-white' : 'bg-transparent text-gray-400'} rounded-md transition`}
+              className={`py-2 px-4 ${activeTab === 'governance' ? 'bg-gradient-to-r from-purple-500 to-purple-600 text-white' : 'bg-transparent text-gray-400 hover:text-gray-300'} rounded-md transition-all duration-300`}
             >
               <i className="fas fa-vote-yea mr-2"></i> Governance
             </TabsTrigger>
@@ -250,10 +250,10 @@ const Staking = () => {
           <TabsContent value="staking">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* PXT Staking */}
-              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 hover:border-cyan-400 transition-colors">
-                <div className="bg-gradient-to-r from-cyan-600 to-cyan-800 text-white p-4">
+              <div className="bg-gradient-to-b from-gray-800/70 to-gray-800/90 rounded-lg shadow-lg overflow-hidden border border-gray-700/50 hover:border-teal-400/50 transition-all duration-300">
+                <div className="bg-gradient-to-r from-teal-600 to-teal-800 text-white p-4">
                   <h2 className="text-xl font-semibold">Stake PXT Tokens</h2>
-                  <p className="text-cyan-200 text-sm">Protocol-wide utility token staking</p>
+                  <p className="text-teal-200 text-sm">Protocol-wide utility token staking</p>
                 </div>
 
                 <div className="p-6">
@@ -272,22 +272,21 @@ const Staking = () => {
                     </div>
                   </div>
 
-                  <div className="mb-6">container
+                  <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-100 mb-3">Benefits</h3>
                     <ul className="space-y-2">
                       <li className="flex items-start">
-                        <i className="fas fa-check-circle text-cyan-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">Protocol Yield: 2-4% APY</span>
+                        <i className="fas fa-check-circle text-teal-400 mt-1 mr-2"></i>
+                        <span className="text-gray-300 text-sm">Protocol Yield: 2-4% APY</span>
                       </li>
                       <li className="flex items-start">
-                        <i className="fas fa-check-circle text-cyan-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">BTC Yield: 0.25-0.5% APY</span>
+                        <i className="fas fa-check-circle text-teal-400 mt-1 mr-2"></i>
+                        <span className="text-gray-300 text-sm">BTC Yield: 0.25-0.5% APY</span>
                       </li>
                       <li className="flex items-start">
-                        <i className="fas fa-check-circle text-cyan-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">Governance rights (1 PXT = 1 vote)</span>
+                        <i className="fas fa-check-circle text-teal-400 mt-1 mr-2"></i>
+                        <span className="text-gray-300 text-sm">Governance rights (1 PXT = 1 vote)</span>
                       </li>
-                      
                     </ul>
                   </div>
 
@@ -296,26 +295,26 @@ const Staking = () => {
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       <Button
                         onClick={() => setPxtLockupPeriod('3')}
-                        className={`${pxtLockupPeriod === '3' ? 'bg-cyan-600 text-white' : 'bg-gray-700 text-gray-300'} border border-gray-600`}
+                        className={`${pxtLockupPeriod === '3' ? 'bg-teal-600 text-white' : 'bg-gray-700/80 text-gray-300 hover:bg-gray-700'} border border-gray-600/50 transition-all duration-300`}
                       >
                         3 Months
                       </Button>
                       <Button
                         onClick={() => setPxtLockupPeriod('6')}
-                        className={`${pxtLockupPeriod === '6' ? 'bg-cyan-600 text-white' : 'bg-gray-700 text-gray-300'} border border-gray-600`}
+                        className={`${pxtLockupPeriod === '6' ? 'bg-teal-600 text-white' : 'bg-gray-700/80 text-gray-300 hover:bg-gray-700'} border border-gray-600/50 transition-all duration-300`}
                       >
                         6 Months
                       </Button>
                       <Button
                         onClick={() => setPxtLockupPeriod('12')}
-                        className={`${pxtLockupPeriod === '12' ? 'bg-cyan-600 text-white' : 'bg-gray-700 text-gray-300'} border border-gray-600`}
+                        className={`${pxtLockupPeriod === '12' ? 'bg-teal-600 text-white' : 'bg-gray-700/80 text-gray-300 hover:bg-gray-700'} border border-gray-600/50 transition-all duration-300`}
                       >
                         12 Months
                       </Button>
                     </div>
                     <div className="flex items-center mb-2">
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-cyan-400 h-2 rounded-full" style={{ width: `${pxtMaxPercentage}%` }}></div>
+                      <div className="w-full bg-gray-700/50 rounded-full h-2">
+                        <div className="bg-teal-400 h-2 rounded-full transition-all duration-500" style={{ width: `${pxtMaxPercentage}%` }}></div>
                       </div>
                     </div>
                     <div className="flex justify-between text-gray-400 text-xs">
@@ -332,11 +331,11 @@ const Staking = () => {
                         id="pxt-stake-amount"
                         value={pxtStakeAmount}
                         onChange={(e) => setPxtStakeAmount(e.target.value)}
-                        className="w-full bg-gray-700 border-gray-600 text-gray-100 rounded-md focus:ring-cyan-500 focus:border-cyan-500 pr-20"
+                        className="w-full bg-gray-700/50 border-gray-600/50 text-gray-100 rounded-md focus:ring-teal-500 focus:border-teal-500 pr-20 transition-all duration-300"
                         placeholder="0"
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center">
-                        <button className="mr-2 text-xs text-cyan-400 font-medium">MAX</button>
+                        <button className="mr-2 text-xs text-teal-400 font-medium hover:text-teal-300 transition-colors duration-300">MAX</button>
                         <span className="mr-3 text-gray-400">PXT</span>
                       </div>
                     </div>
@@ -344,7 +343,7 @@ const Staking = () => {
 
                   <Button
                     onClick={stakePxt}
-                    className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white py-3 px-4 rounded-lg font-medium transition"
+                    className="w-full bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-400 hover:to-teal-500 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-teal-500/30"
                   >
                     <i className="fas fa-lock mr-2"></i> Stake PXT
                   </Button>
@@ -352,7 +351,7 @@ const Staking = () => {
               </div>
 
               {/* APT Staking */}
-              <div className="bg-gray-800 rounded-lg shadow-md overflow-hidden border border-gray-700 hover:border-purple-500 transition-colors">
+              <div className="bg-gradient-to-b from-gray-800/70 to-gray-800/90 rounded-lg shadow-lg overflow-hidden border border-gray-700/50 hover:border-purple-400/50 transition-all duration-300">
                 <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white p-4">
                   <h2 className="text-xl font-semibold">Stake APT Tokens</h2>
                   <p className="text-purple-200 text-sm">Asset-specific token staking</p>
@@ -364,13 +363,13 @@ const Staking = () => {
                       <span className="text-sm text-gray-400">Select APT Token</span>
                       <div className="text-sm font-semibold">
                         <Select value={selectedApt} onValueChange={setSelectedApt}>
-                          <SelectTrigger className="bg-gray-700 border-gray-600 text-gray-100 focus:ring-purple-500 focus:border-purple-500 text-xs w-40">
+                          <SelectTrigger className="bg-gray-700/50 border-gray-600/50 text-gray-100 focus:ring-purple-500 focus:border-purple-500 text-xs w-40 transition-all duration-300">
                             <SelectValue placeholder="Select Token" />
                           </SelectTrigger>
-                          <SelectContent className="bg-gray-800 border-gray-700 text-gray-100">
-                            <SelectItem value="select_token" className="hover:bg-gray-700">Select Token</SelectItem>
+                          <SelectContent className="bg-gray-800/90 border-gray-700/50 text-gray-100">
+                            <SelectItem value="select_token" className="hover:bg-gray-700/70 transition-colors duration-300">Select Token</SelectItem>
                             {assets.map((asset) => (
-                              <SelectItem key={asset.id} value={asset.symbol} className="hover:bg-gray-700">{asset.symbol}-APT</SelectItem>
+                              <SelectItem key={asset.id} value={asset.symbol} className="hover:bg-gray-700/70 transition-colors duration-300">{asset.symbol}-APT</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -395,17 +394,16 @@ const Staking = () => {
                     <ul className="space-y-2">
                       <li className="flex items-start">
                         <i className="fas fa-check-circle text-purple-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">Asset Profit: 4.5% APY</span>
+                        <span className="text-gray-300 text-sm">Asset Profit: 4.5% APY</span>
                       </li>
                       <li className="flex items-start">
                         <i className="fas fa-check-circle text-purple-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">BTC Yield: 0.25-0.5% APY</span>
+                        <span className="text-gray-300 text-sm">BTC Yield: 0.25-0.5% APY</span>
                       </li>
                       <li className="flex items-start">
                         <i className="fas fa-check-circle text-purple-400 mt-1 mr-2"></i>
-                        <span className="text-gray-400 text-sm">Cash flow rights to 45% of asset profits</span>
+                        <span className="text-gray-300 text-sm">Cash flow rights to 45% of asset profits</span>
                       </li>
-                      
                     </ul>
                   </div>
 
@@ -414,26 +412,26 @@ const Staking = () => {
                     <div className="grid grid-cols-3 gap-2 mb-4">
                       <Button
                         onClick={() => setAptLockupPeriod('3')}
-                        className={`${aptLockupPeriod === '3' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'} border border-gray-600`}
+                        className={`${aptLockupPeriod === '3' ? 'bg-purple-600 text-white' : 'bg-gray-700/80 text-gray-300 hover:bg-gray-700'} border border-gray-600/50 transition-all duration-300`}
                       >
                         3 Months
                       </Button>
                       <Button
                         onClick={() => setAptLockupPeriod('6')}
-                        className={`${aptLockupPeriod === '6' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'} border border-gray-600`}
+                        className={`${aptLockupPeriod === '6' ? 'bg-purple-600 text-white' : 'bg-gray-700/80 text-gray-300 hover:bg-gray-700'} border border-gray-600/50 transition-all duration-300`}
                       >
                         6 Months
                       </Button>
                       <Button
                         onClick={() => setAptLockupPeriod('12')}
-                        className={`${aptLockupPeriod === '12' ? 'bg-purple-600 text-white' : 'bg-gray-700 text-gray-300'} border border-gray-600`}
+                        className={`${aptLockupPeriod === '12' ? 'bg-purple-600 text-white' : 'bg-gray-700/80 text-gray-300 hover:bg-gray-700'} border border-gray-600/50 transition-all duration-300`}
                       >
                         12 Months
                       </Button>
                     </div>
                     <div className="flex items-center mb-2">
-                      <div className="w-full bg-gray-700 rounded-full h-2">
-                        <div className="bg-purple-400 h-2 rounded-full" style={{ width: `${aptMaxPercentage}%` }}></div>
+                      <div className="w-full bg-gray-700/50 rounded-full h-2">
+                        <div className="bg-purple-400 h-2 rounded-full transition-all duration-500" style={{ width: `${aptMaxPercentage}%` }}></div>
                       </div>
                     </div>
                     <div className="flex justify-between text-gray-400 text-xs">
@@ -450,11 +448,11 @@ const Staking = () => {
                         id="apt-stake-amount"
                         value={aptStakeAmount}
                         onChange={(e) => setAptStakeAmount(e.target.value)}
-                        className="w-full bg-gray-700 border-gray-600 text-gray-100 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-20"
+                        className="w-full bg-gray-700/50 border-gray-600/50 text-gray-100 rounded-md focus:ring-purple-500 focus:border-purple-500 pr-20 transition-all duration-300"
                         placeholder="0"
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center">
-                        <button className="mr-2 text-xs text-purple-400 font-medium">MAX</button>
+                        <button className="mr-2 text-xs text-purple-400 font-medium hover:text-purple-300 transition-colors duration-300">MAX</button>
                         <span className="mr-3 text-gray-400">APT</span>
                       </div>
                     </div>
@@ -472,7 +470,7 @@ const Staking = () => {
                       }
                       alert(`Staked ${aptStakeAmount} ${selectedApt}-APT for ${aptLockupPeriod} months`);
                     }}
-                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white py-3 px-4 rounded-lg font-medium transition"
+                    className="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-400 hover:to-purple-500 text-white py-3 px-4 rounded-lg font-medium transition-all duration-300 hover:shadow-purple-500/30"
                   >
                     <i className="fas fa-lock mr-2"></i> Stake APT
                   </Button>
@@ -481,7 +479,7 @@ const Staking = () => {
             </div>
 
             {/* Staking Stats */}
-            <div className="bg-gray-800 rounded-lg shadow-md mt-8 p-6 border border-gray-700">
+            <div className="bg-gradient-to-b from-gray-800/70 to-gray-800/90 rounded-lg shadow-lg mt-8 p-6 border border-gray-700/50">
               <h3 className="text-xl font-semibold text-gray-100 mb-4">Your Staking Stats</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
@@ -490,7 +488,7 @@ const Staking = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-400 mb-1">Estimated Annual Yield</p>
-                  <p className="text-2xl font-semibold text-cyan-400">$0.00</p>
+                  <p className="text-2xl font-semibold text-teal-400">$0.00</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-400 mb-1">BTC Rewards</p>
@@ -498,37 +496,32 @@ const Staking = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-400 mb-1">Active Stakes</p>
-                  <p className="text-xl font-semibold text-cyan-400">0</p>
+                  <p className="text-xl font-semibold text-teal-400">0</p>
                 </div>
               </div>
-
-              
             </div>
           </TabsContent>
 
           <TabsContent value="governance">
-            <div className="bg-gray-800 rounded-lg shadow-md p-6 mb-8 border border-gray-700">
+            <div className="bg-gradient-to-b from-gray-800/70 to-gray-800/90 rounded-lg shadow-lg p-6 mb-8 border border-gray-700/50">
               <h3 className="text-xl font-semibold text-gray-100 mb-4">Asset Tokenization Proposals</h3>
 
               {!connected ? (
                 <div className="text-center p-8">
-                  <div className="w-16 h-16 mx-auto bg-gray-700 text-cyan-400 rounded-full flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 mx-auto bg-gray-700/50 text-teal-400 rounded-full flex items-center justify-center mb-4">
                     <i className="fas fa-wallet text-2xl"></i>
                   </div>
                   <h3 className="text-lg font-medium text-gray-100 mb-2">Connect Your Wallet</h3>
                   <p className="text-gray-400 mb-6">Connect your Stacks wallet to view and vote on tokenization proposals.</p>
-                  {/* <Button className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white px-6 py-2 rounded-lg text-base font-medium transition">
-                    Connect Wallet
-                  </Button> */}
                 </div>
               ) : (
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <p className="text-gray-400 text-sm">You have <span className="font-semibold text-gray-100">0 PXT</span> staked, giving you <span className="font-semibold text-cyan-400">0 votes</span>.</p>
+                    <p className="text-gray-400 text-sm">You have <span className="font-semibold text-gray-100">0 PXT</span> staked, giving you <span className="font-semibold text-teal-400">0 votes</span>.</p>
                     <p className="text-gray-400 text-sm">Min. stake required: <span className="font-semibold text-gray-100">100 PXT</span></p>
                   </div>
 
-                  <div className="divide-y divide-gray-700">
+                  <div className="divide-y divide-gray-700/50">
                     {tokenizationProposals.map((proposal, index) => {
                       const votePercent = calculateVotePercentage(proposal.votes.yes, proposal.votes.no);
                       return (
@@ -544,7 +537,7 @@ const Staking = () => {
                             </div>
                             <div className="mt-4 lg:mt-0">
                               <Button 
-                                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+                                className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-400 hover:to-teal-500 text-white transition-all duration-300"
                                 onClick={() => {
                                   setSelectedProposal(proposal);
                                   setUserVote(null);
@@ -564,9 +557,9 @@ const Staking = () => {
                                 No: {proposal.votes.no.toLocaleString()} ({votePercent.no}%)
                               </span>
                             </div>
-                            <div className="w-full bg-gray-700 rounded-full h-2 flex overflow-hidden">
-                              <div className="bg-green-500 h-2" style={{ width: `${votePercent.yes}%` }}></div>
-                              <div className="bg-red-500 h-2" style={{ width: `${votePercent.no}%` }}></div>
+                            <div className="w-full bg-gray-700/50 rounded-full h-2 flex overflow-hidden">
+                              <div className="bg-green-500 h-2 transition-all duration-500" style={{ width: `${votePercent.yes}%` }}></div>
+                              <div className="bg-red-500 h-2 transition-all duration-500" style={{ width: `${votePercent.no}%` }}></div>
                             </div>
                           </div>
 
@@ -590,7 +583,7 @@ const Staking = () => {
 
         {/* Voting Modal */}
         <Dialog open={showVoteModal} onOpenChange={setShowVoteModal}>
-          <DialogContent className="sm:max-w-[500px] bg-gray-800 border-gray-700 text-gray-100">
+          <DialogContent className="sm:max-w-[500px] bg-gradient-to-b from-gray-800/90 to-gray-800/70 border-gray-700/50 text-gray-100">
             <DialogHeader>
               <DialogTitle className="text-gray-100">Vote on Asset Tokenization</DialogTitle>
               <DialogDescription className="text-gray-400">
@@ -627,14 +620,14 @@ const Staking = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <Button
                       variant={userVote === true ? 'default' : 'outline'}
-                      className={`${userVote === true ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-600 text-gray-300'} h-12`}
+                      className={`${userVote === true ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-gray-600/50 text-gray-300 hover:bg-gray-700/50'} h-12 transition-all duration-300`}
                       onClick={() => setUserVote(true)}
                     >
                       <i className="fas fa-check mr-2"></i> YES
                     </Button>
                     <Button
                       variant={userVote === false ? 'default' : 'outline'}
-                      className={`${userVote === false ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-gray-600 text-gray-300'} h-12`}
+                      className={`${userVote === false ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-gray-600/50 text-gray-300 hover:bg-gray-700/50'} h-12 transition-all duration-300`}
                       onClick={() => setUserVote(false)}
                     >
                       <i className="fas fa-times mr-2"></i> NO
@@ -642,7 +635,7 @@ const Staking = () => {
                   </div>
                 </div>
 
-                <div className="bg-gray-700 p-4 rounded-md mb-4">
+                <div className="bg-gray-700/50 p-4 rounded-md mb-4">
                   <p className="text-xs text-gray-400">By voting, you are helping to determine whether this real-world asset should be tokenized on the PropertyX platform. Your vote is weighted by your staked PXT amount.</p>
                 </div>
               </div>
@@ -651,13 +644,13 @@ const Staking = () => {
             <DialogFooter>
               <Button 
                 variant="outline" 
-                className="border-gray-600 text-gray-300 hover:bg-gray-700" 
+                className="border-gray-600/50 text-gray-300 hover:bg-gray-700/50 transition-all duration-300" 
                 onClick={() => setShowVoteModal(false)}
               >
                 Cancel
               </Button>
               <Button 
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white" 
+                className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-400 hover:to-teal-500 text-white transition-all duration-300" 
                 onClick={submitVote}
                 disabled={isSubmittingVote || userVote === null}
               >
@@ -673,5 +666,6 @@ const Staking = () => {
       </div>
     </div>
   );
-};
-export default Staking;
+  };
+
+  export default Staking;
