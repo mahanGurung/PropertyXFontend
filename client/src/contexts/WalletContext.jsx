@@ -234,46 +234,94 @@ export const WalletProvider = ({ children }) => {
   
 
   // Function to check if the current user is the admin
-  const checkIsAdmin = async () => {
+  const isContractAdmin = async () => {
     if (!connected) return false;
 
     try {
       if (connected) {
-        const response = await request("stx_callContract", {
-          contract: "ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.test5-rws",
-          functionName: "get-admin",
+        const options = {
+          contractAddress: "ST1JG6WDA1B4PZD8JZY95RPNKFFF5YKPV57BHPC9G",
+          contractName: "marketplace",
+          functionName: "get-contract-owner",
           functionArgs: [],
+          senderAddress: stxAddress,
           network: "testnet",
-        });
+        };
+        const response = await fetchCallReadOnlyFunction(options);
 
         console.log("admin", response);
 
-        if (response.value && response.value.type === "ok") {
-          const adminAddress = response.value.value.address;
-          return adminAddress === stxAddress;
+        if (response.type === "err") {
+          return false;
         }
 
-        return false;
+        return true;
       }
-
-      // const result = await simulateContractCall({
-      //   contractAddress: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E',
-      //   contractName: 'rws',
-      //   functionName: 'get-admin',
-      //   functionArgs: [],
-      //   network,
-      //   senderAddress: stxAddress
-      // });
-
-      // if (result.value && result.value.type === 'ok') {
-      //   const adminAddress = result.value.value.address;
-      //   return adminAddress === stxAddress;
-      // }
-
-      // return false;
     } catch (error) {
       console.error("Error checking admin status:", error);
       return false;
+    }
+  };
+
+  const updateMarketplaceContract = async (principal, role) => {
+    if (!connected) throw new Error("Wallet not connected");
+    try {
+      await request("stx_callContract", {
+        contractAddress: "ST1JG6WDA1B4PZD8JZY95RPNKFFF5YKPV57BHPC9G",
+        contractName: "marketplace",
+        functionName: "update-marketplace-contract",
+        functionArgs: [
+          createPrincipalCV(principal),
+          Cl.bufferFromHex(parseInt(role)) // Assuming role is a hex string like '0x00'
+        ],
+        network: "testnet",
+        postConditionMode: 'allow'
+      });
+    } catch (error) {
+      console.error("Error updating marketplace contract:", error);
+      throw error;
+    }
+  };
+
+  const updateKycContract = async (principal, role) => {
+    if (!connected) throw new Error("Wallet not connected");
+    try {
+      await request("stx_callContract", {
+        contractAddress: "ST1JG6WDA1B4PZD8JZY95RPNKFFF5YKPV57BHPC9G",
+        contractName: "marketplace",
+        functionName: "update-kyc-contract",
+        functionArgs: [
+          createPrincipalCV(principal),
+          createUintCV(parseInt(role, 16)) // Assuming role is a hex string like '0x00'
+        ],
+        network: "testnet",
+        postConditionMode: 'allow'
+      });
+    } catch (error) {
+      console.error("Error updating KYC contract:", error);
+      throw error;
+    }
+  };
+
+  const whitelistTokenCreator = async (contractIdentifier, status) => {
+    if (!connected) throw new Error("Wallet not connected");
+
+    
+    
+    try {
+      await request("stx_callContract", {
+        contract: 'ST1JG6WDA1B4PZD8JZY95RPNKFFF5YKPV57BHPC9G.marketplace',
+        functionName: "set-whitelisted",
+        functionArgs: [
+          Cl.principal(contractIdentifier),
+          Cl.bool(status)
+        ],
+        network: "testnet",
+        postConditionMode: 'allow'
+      });
+    } catch (error) {
+      console.error("Error whitelisting token creator:", error);
+      throw error;
     }
   };
 
@@ -359,34 +407,7 @@ export const WalletProvider = ({ children }) => {
     }
   };
 
-  //  const addTokenization = async() => {
-  //         if (!connected) {
-  //           alert('Please connect your wallet first');
-  //           return;
-  //         }
-  //         if (connected) {
-
-  //           const response = await request('stx_callContract', {
-  //             contract: 'ST1VZ3YGJKKC8JSSWMS4EZDXXJM7QWRBEZ0ZWM64E.rws',
-  //             functionName: 'add-for-tokenization',
-  //             functionArgs: [
-
-  //                             Cl.uint(2),
-  //                             Cl.stringUtf8(formData.assetName),
-  //                             Cl.uint(formData.assetSupply),
-  //                             Cl.stringUtf8("haoje")
-  //                           ],
-  //             // functionArgs: [
-  //             //                 Cl.principal(address),
-  //             //                 Cl.stringUtf8('dsjoenow')
-
-  //             //               ],
-  //             network: 'testnet'
-  //           })
-
-  //         }
-
-  //       };
+  
 
   // The context value that will be supplied to any descendants of this provider
   const contextValue = {
@@ -400,9 +421,12 @@ export const WalletProvider = ({ children }) => {
     fetchBalance,
     getNftData,
     getAssetData,
-    checkIsAdmin,
     fetchIpfsMetadata,
     getMarketplaceListings,
+    isContractAdmin,
+    updateMarketplaceContract,
+    updateKycContract,
+    whitelistTokenCreator,
   };
 
   return (

@@ -11,7 +11,6 @@ const Header = () => {
   const navigationItems = [
     { name: 'Home', path: '/' },
     { name: 'Marketplace', path: '/marketplace' },
-    { name: 'Staking', path: '/staking' },
   ];
 
   const isActive = (path) => location === path;
