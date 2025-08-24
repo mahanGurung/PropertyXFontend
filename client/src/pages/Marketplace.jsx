@@ -15,7 +15,7 @@ import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from '@
 import { shortenAddress, formatCurrency } from '../lib/utils';
 import { fetchNFTListings, fetchIPFSMetadata, generateMetadataCID } from '../utils/stacksIndexer';
 import AssetDetailModal from '../components/ui/asset-detail-modal';
-// import assets from '../data/asset-data.js';
+import assets from '../data/asset-data.js';
 import axios from 'axios';
 import { fetchCallReadOnlyFunction, fetchContractMapEntry, uintCV, principalCV, Cl } from '@stacks/transactions';
 import { request, openContractCall } from '@stacks/connect';
@@ -587,7 +587,7 @@ const Marketplace = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {/* {assets.map((asset) => (
+                  {assets.map((asset) => (
                     <div key={asset.id} className="bg-gradient-to-b from-gray-800/50 to-gray-800/80 rounded-lg shadow-lg overflow-hidden border border-gray-700/30 hover:border-teal-400/50 transition-all duration-300 hover:shadow-teal-500/20">
                       <div className="h-48 bg-gray-800/50 overflow-hidden">
                         <img
@@ -600,43 +600,22 @@ const Marketplace = () => {
                       <div className="p-4">
                         <div className="flex justify-between items-start">
                           <h3 className="text-lg font-semibold text-gray-100">
-                            {asset.name}
+                            Name: {asset.name}
                           </h3>
                           <div className="px-2 py-1 bg-gray-800/50 rounded text-xs font-medium text-gray-300 capitalize">
-                            {asset.type}
+                            Type: {asset.type}
                           </div>
                         </div>
                         <p className="mt-2 text-sm text-gray-300 line-clamp-2">{asset.description}</p>
 
-                        <div className="mt-4 grid grid-cols-2 gap-4 mb-4">
-                          <div>
-                            <p className="text-xs text-gray-400">Valuation</p>
-                            <p className="text-sm font-semibold text-teal-300">{asset.valuation}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-400">Token Price</p>
-                            <p className="text-sm font-semibold text-gray-100">{asset.tokenPrice}</p>
-                          </div>
+                        <div className="mt-4 grid grid-cols-2 gap-4 mb-4 text-5xl">
+                         Comming Soon.....
                         </div>
 
-                        <div className="flex space-x-2">
-                          <Button
-                            variant="outline"
-                            className="flex-1 border-gray-700/50 text-gray-300 hover:bg-gray-800/50 hover:border-teal-400/50 transition-all duration-300"
-                            onClick={() => handleAssetClick(asset)}
-                          >
-                            View Details
-                          </Button>
-                          <Button
-                            className="flex-1 bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white transition-all duration-300 hover:shadow-teal-500/30"
-                            disabled={!asset.ownershipAvailable}
-                          >
-                            {asset.ownershipAvailable ? 'Buy Now' : 'Unavailable'}
-                          </Button>
-                        </div>
+                        
                       </div>
                     </div>
-                  ))} */}
+                  ))}
                   {nftListings.map((listing) => {
                     const assetData = listing.imageUrl?.asset || listing;
                     return (

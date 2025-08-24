@@ -81,6 +81,17 @@ const Profile = () => {
     console.log("asset data all: ", assetDataAll)
 
     const tokenContractAddress = selectedApt.token.split('::')[0];
+    
+    if (tokenContractAddress === 'ST388W712B8F7BKQG4G6QHD2K9P9SKBRD9FHQY8DG.testcoin') {
+      toast({
+        title: 'Staking Not Allowed',
+        description: 'This asset cannot be staked.',
+        variant: 'destructive'
+      });
+      setShowStakeModal(false);
+      return;
+    }
+
     const [contractAddress, contractName] = tokenContractAddress.split('.');
     const functionName = `lock-${assetDataAll.symbol}`;
     const amount = parseInt(stakingDetails.amount, 10) * 1000000; // Assuming 8 decimal places
@@ -121,6 +132,7 @@ const Profile = () => {
       });
 
       setShowStakeModal(false);
+      window.location.reload();
 
     } catch (error) {
       console.error('Error staking asset:', error);
@@ -310,10 +322,14 @@ ${information}
                               <Button
                                 className="flex-1 bg-gradient-to-r from-teal-500 to-purple-600 hover:from-teal-400 hover:to-purple-500 text-white transition-all duration-300 hover:shadow-teal-500/30"
                                 onClick={() => handleStakeApt(apt)}
+                                disabled={apt.token.split('::')[0] === 'ST388W712B8F7BKQG4G6QHD2K9P9SKBRD9FHQY8DG.testcoin'}
                               >
                                 Stake APT
                               </Button>
                             </div>
+                            {apt.token.split('::')[0] === 'ST388W712B8F7BKQG4G6QHD2K9P9SKBRD9FHQY8DG.testcoin' && (
+                                <p className="text-sm text-red-400 mt-2 text-center">Can't be staked</p>
+                            )}
                             <div className="mt-4 pt-4 border-t border-gray-700/30 flex justify-between items-center">
                                 <div className="text-xs text-gray-400">
                                     Token: <span className="font-mono">{apt.token}</span>
